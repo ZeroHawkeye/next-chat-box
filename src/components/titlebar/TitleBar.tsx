@@ -1,34 +1,41 @@
-import { useState, useEffect } from "react"
-import { getCurrentWindow } from "@tauri-apps/api/window"
-import { Minus, Square, X, Maximize2 } from "lucide-react"
+import { useState, useEffect, useRef } from "react"
+import { getCurrentWindow, Window } from "@tauri-apps/api/window"
+import { Minus, Square, X, Copy } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { usePlatform } from "@/hooks/usePlatform"
+import { isTauri, getOperatingSystem } from "@/lib/platform"
 
 interface TitleBarProps {
   className?: string
   title?: string
 }
 
+// 在模块级别检测环境，确保一致性
+const IS_TAURI = isTauri()
+const IS_MAC = getOperatingSystem() === "macos"
+
 /**
  * 自定义标题栏组件
- * - 支持窗口拖拽
+ * - 支持窗口拖拽（通过 startDragging API）
  * - 窗口控制按钮（最小化、最大化、关闭）
  * - 跨平台适配（Windows/macOS 按钮位置不同）
  */
 export function TitleBar({ className, title = "Next AI" }: TitleBarProps) {
-  const { isDesktop, isMacOS } = usePlatform()
   const [isMaximized, setIsMaximized] = useState(false)
+  const appWindowRef = useRef<Window | null>(null)
 
   useEffect(() => {
-    if (!isDesktop) return
+    if (!IS_TAURI) return
+
+    // 获取窗口实例
+    const win = getCurrentWindow()
+    appWindowRef.current = win
 
     const checkMaximized = async () => {
       try {
-        const win = getCurrentWindow()
         const maximized = await win.isMaximized()
         setIsMaximized(maximized)
       } catch {
-        // 忽略非 Tauri 环境的错误
+        // 忽略错误
       }
     }
 
@@ -39,13 +46,16 @@ export function TitleBar({ className, title = "Next AI" }: TitleBarProps) {
 
     const setupListener = async () => {
       try {
-        const win = getCurrentWindow()
         unlisten = await win.onResized(async () => {
-          const maximized = await win.isMaximized()
-          setIsMaximized(maximized)
+          try {
+            const maximized = await win.isMaximized()
+            setIsMaximized(maximized)
+          } catch {
+            // 忽略错误
+          }
         })
       } catch {
-        // 忽略非 Tauri 环境的错误
+        // 忽略错误
       }
     }
 
@@ -54,86 +64,111 @@ export function TitleBar({ className, title = "Next AI" }: TitleBarProps) {
     return () => {
       unlisten?.()
     }
-  }, [isDesktop])
+  }, [])
 
-  const handleMinimize = async () => {
+  // 开始拖拽窗口
+  const startDrag = async () => {
+    const win = appWindowRef.current
+    if (!win) return
     try {
-      const win = getCurrentWindow()
-      await win.minimize()
-    } catch {
-      // 忽略非 Tauri 环境的错误
+      await win.startDragging()
+    } catch (e) {
+      console.error("Failed to start dragging:", e)
     }
   }
 
-  const handleMaximize = async () => {
+  // 双击切换最大化
+  const toggleMaximize = async () => {
+    const win = appWindowRef.current
+    if (!win) return
     try {
-      const win = getCurrentWindow()
       await win.toggleMaximize()
-    } catch {
-      // 忽略非 Tauri 环境的错误
+    } catch (e) {
+      console.error("Failed to toggle maximize:", e)
+    }
+  }
+
+  const handleMinimize = async () => {
+    const win = appWindowRef.current
+    if (!win) return
+    try {
+      await win.minimize()
+    } catch (e) {
+      console.error("Failed to minimize:", e)
     }
   }
 
   const handleClose = async () => {
+    const win = appWindowRef.current
+    if (!win) return
     try {
-      const win = getCurrentWindow()
       await win.close()
-    } catch {
-      // 忽略非 Tauri 环境的错误
+    } catch (e) {
+      console.error("Failed to close:", e)
     }
   }
 
-  // 非桌面端不显示标题栏
-  if (!isDesktop) {
+  // 非 Tauri 环境不显示标题栏
+  if (!IS_TAURI) {
     return null
   }
 
   return (
     <header
-      data-tauri-drag-region
       className={cn(
-        "h-8 flex items-center select-none bg-background/80 backdrop-blur-sm border-b border-border/50",
-        "titlebar-drag",
+        "h-9 flex items-center select-none bg-background border-b border-border/50 flex-shrink-0",
         className
       )}
+      onMouseDown={(e) => {
+        // 只处理左键
+        if (e.button !== 0) return
+        // 双击最大化
+        if (e.detail === 2) {
+          toggleMaximize()
+        } else {
+          startDrag()
+        }
+      }}
     >
-      {/* macOS: 按钮在左侧，需要留出空间 */}
-      {isMacOS && <div className="w-[70px]" />}
+      {/* macOS: 按钮在左侧，需要留出空间给系统交通灯按钮 */}
+      {IS_MAC && <div className="w-[70px] flex-shrink-0" />}
 
-      {/* 标题 */}
-      <div className="flex-1 flex items-center px-3">
-        <span className="text-xs font-medium text-muted-foreground">{title}</span>
+      {/* 标题 - 可拖拽区域 */}
+      <div className="flex-1 flex items-center px-3 h-full">
+        <span className="text-xs font-medium text-muted-foreground">
+          {title}
+        </span>
       </div>
 
       {/* Windows/Linux: 按钮在右侧 */}
-      {!isMacOS && (
-        <div className="flex items-center titlebar-no-drag">
+      {!IS_MAC && (
+        <div className="flex items-center flex-shrink-0 h-full">
           <WindowButton
             onClick={handleMinimize}
-            className="hover:bg-muted"
+            hoverClass="hover:bg-secondary"
             aria-label="最小化"
           >
-            <Minus className="w-3.5 h-3.5" />
+            <Minus className="w-4 h-4" />
           </WindowButton>
           
           <WindowButton
-            onClick={handleMaximize}
-            className="hover:bg-muted"
+            onClick={toggleMaximize}
+            hoverClass="hover:bg-secondary"
             aria-label={isMaximized ? "还原" : "最大化"}
           >
             {isMaximized ? (
-              <Maximize2 className="w-3 h-3" />
+              <Copy className="w-3.5 h-3.5 rotate-180" />
             ) : (
-              <Square className="w-3 h-3" />
+              <Square className="w-3.5 h-3.5" />
             )}
           </WindowButton>
           
           <WindowButton
             onClick={handleClose}
-            className="hover:bg-destructive hover:text-destructive-foreground"
+            hoverClass="hover:bg-red-500 hover:text-white"
             aria-label="关闭"
           >
-            <X className="w-3.5 h-3.5" />
+            <X className="w-4 h-4" />
           </WindowButton>
         </div>
       )}
@@ -143,19 +178,25 @@ export function TitleBar({ className, title = "Next AI" }: TitleBarProps) {
 
 interface WindowButtonProps {
   onClick: () => void
-  className?: string
+  hoverClass?: string
   children: React.ReactNode
   "aria-label": string
 }
 
-function WindowButton({ onClick, className, children, "aria-label": ariaLabel }: WindowButtonProps) {
+function WindowButton({ onClick, hoverClass, children, "aria-label": ariaLabel }: WindowButtonProps) {
   return (
     <button
-      onClick={onClick}
+      onClick={(e) => {
+        e.stopPropagation()
+        onClick()
+      }}
+      onMouseDown={(e) => {
+        e.stopPropagation()
+      }}
       className={cn(
-        "w-11 h-8 flex items-center justify-center transition-colors",
+        "w-12 h-full flex items-center justify-center transition-colors",
         "text-foreground/70 hover:text-foreground",
-        className
+        hoverClass
       )}
       aria-label={ariaLabel}
     >

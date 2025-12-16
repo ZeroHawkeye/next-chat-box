@@ -13,12 +13,13 @@ interface DesktopLayoutProps {
  * - 自定义标题栏
  * - 左侧固定侧边栏
  * - 右侧主内容区
+ * - 自定义窗口边框（替代系统阴影边框）
  */
 export function DesktopLayout({ children }: DesktopLayoutProps) {
   const { sidebarOpen } = useAppStore()
 
   return (
-    <div className="flex flex-col h-screen bg-background overflow-hidden">
+    <div className="flex flex-col h-screen bg-background overflow-hidden border border-border/50 rounded-sm">
       {/* 自定义标题栏 */}
       <TitleBar />
 

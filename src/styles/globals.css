@@ -212,12 +212,15 @@
 
 @layer components {
   /* ===== 标题栏样式 ===== */
-  .titlebar-drag {
+  .titlebar {
     -webkit-app-region: drag;
+    app-region: drag;
   }
 
+  .titlebar button,
   .titlebar-no-drag {
     -webkit-app-region: no-drag;
+    app-region: no-drag;
   }
 
   /* ===== 滚动条样式 ===== */

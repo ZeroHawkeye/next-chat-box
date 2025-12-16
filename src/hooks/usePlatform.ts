@@ -1,9 +1,15 @@
-import { useState, useEffect, useCallback } from "react"
+import { useState, useEffect, useCallback, useMemo } from "react"
 import {
   getPlatformInfo,
   getBreakpoint,
+  isTauri,
+  getOperatingSystem,
   type PlatformInfo,
 } from "@/lib/platform"
+
+// 在模块级别缓存平台检测结果，确保一致性
+const CACHED_IS_TAURI = isTauri()
+const CACHED_OS = getOperatingSystem()
 
 /**
  * 平台检测 Hook
@@ -17,10 +23,24 @@ export function usePlatform(): PlatformInfo & {
   isWindows: boolean
   isLinux: boolean
 } {
-  const [platformInfo, setPlatformInfo] = useState<PlatformInfo>(getPlatformInfo)
+  const [platformInfo, setPlatformInfo] = useState<PlatformInfo>(() => {
+    const info = getPlatformInfo()
+    // 确保使用缓存的 Tauri 检测结果
+    return {
+      ...info,
+      isTauri: CACHED_IS_TAURI,
+      platform: CACHED_IS_TAURI ? "desktop" : info.platform,
+    }
+  })
 
   const updatePlatformInfo = useCallback(() => {
-    setPlatformInfo(getPlatformInfo())
+    const info = getPlatformInfo()
+    setPlatformInfo({
+      ...info,
+      // 保持 Tauri 检测结果一致
+      isTauri: CACHED_IS_TAURI,
+      platform: CACHED_IS_TAURI ? "desktop" : info.platform,
+    })
   }, [])
 
   useEffect(() => {
@@ -37,15 +57,16 @@ export function usePlatform(): PlatformInfo & {
     }
   }, [updatePlatformInfo])
 
-  return {
+  // 使用 useMemo 确保返回值稳定
+  return useMemo(() => ({
     ...platformInfo,
     isDesktop: platformInfo.platform === "desktop",
     isWeb: platformInfo.platform === "web",
     isMobileView: platformInfo.isMobile || platformInfo.breakpoint === "xs" || platformInfo.breakpoint === "sm",
-    isMacOS: platformInfo.isMacOS,
-    isWindows: platformInfo.isWindows,
-    isLinux: platformInfo.isLinux,
-  }
+    isMacOS: CACHED_OS === "macos",
+    isWindows: CACHED_OS === "windows",
+    isLinux: CACHED_OS === "linux",
+  }), [platformInfo])
 }
 
 /**
@@ -64,7 +85,7 @@ export function useBreakpoint() {
     return () => window.removeEventListener("resize", handleResize)
   }, [])
 
-  return {
+  return useMemo(() => ({
     breakpoint,
     isXs: breakpoint === "xs",
     isSm: breakpoint === "sm",
@@ -76,7 +97,7 @@ export function useBreakpoint() {
     isMobile: breakpoint === "xs" || breakpoint === "sm",
     isTablet: breakpoint === "md",
     isDesktop: breakpoint === "lg" || breakpoint === "xl" || breakpoint === "2xl",
-  }
+  }), [breakpoint])
 }
 
 /**
@@ -97,4 +118,12 @@ export function useMediaQuery(query: string): boolean {
   }, [query])
 
   return matches
+}
+
+/**
+ * 简单的 Tauri 环境检测 Hook
+ * 使用缓存值，确保一致性
+ */
+export function useIsTauri(): boolean {
+  return CACHED_IS_TAURI
 }

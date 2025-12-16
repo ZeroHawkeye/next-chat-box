@@ -9,9 +9,18 @@ export type OperatingSystem = "windows" | "macos" | "linux" | "ios" | "android" 
 
 /**
  * 检测是否在 Tauri 环境中运行
+ * 注意：这个检测应该是同步且稳定的
  */
 export function isTauri(): boolean {
-  return typeof window !== "undefined" && "__TAURI__" in window
+  if (typeof window === "undefined") return false
+  
+  // 检查 __TAURI__ 对象
+  if ("__TAURI__" in window) return true
+  
+  // 检查 __TAURI_INTERNALS__ (Tauri v2)
+  if ("__TAURI_INTERNALS__" in window) return true
+  
+  return false
 }
 
 /**
@@ -48,10 +57,9 @@ export function getOperatingSystem(): OperatingSystem {
   if (typeof navigator === "undefined") return "unknown"
   
   const ua = navigator.userAgent.toLowerCase()
-  const platform = navigator.platform?.toLowerCase() || ""
   
   // 检测 iOS
-  if (/iphone|ipad|ipod/.test(ua) || (platform === "macintel" && navigator.maxTouchPoints > 1)) {
+  if (/iphone|ipad|ipod/.test(ua)) {
     return "ios"
   }
   
@@ -61,17 +69,17 @@ export function getOperatingSystem(): OperatingSystem {
   }
   
   // 检测 macOS
-  if (/macintosh|mac os x/.test(ua) || platform.startsWith("mac")) {
+  if (/macintosh|mac os x/.test(ua)) {
     return "macos"
   }
   
   // 检测 Windows
-  if (/win32|win64|windows/.test(ua) || platform.startsWith("win")) {
+  if (/windows/.test(ua)) {
     return "windows"
   }
   
   // 检测 Linux
-  if (/linux/.test(ua) || platform.startsWith("linux")) {
+  if (/linux/.test(ua)) {
     return "linux"
   }
   
@@ -143,11 +151,12 @@ export interface PlatformInfo {
  */
 export function getPlatformInfo(): PlatformInfo {
   const os = getOperatingSystem()
+  const tauriEnv = isTauri()
   return {
     platform: getPlatform(),
     deviceType: getDeviceType(),
     os,
-    isTauri: isTauri(),
+    isTauri: tauriEnv,
     isMobile: isMobileDevice(),
     isTablet: isTablet(),
     isTouch: isTouchDevice(),
