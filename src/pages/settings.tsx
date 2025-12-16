@@ -1,13 +1,31 @@
 import { useAppStore } from "@/store/useAppStore"
+import { useThemeStore, themeColors, type ThemeMode, type ThemeColor } from "@/store/useThemeStore"
 import { Button } from "@/components/ui/button"
-import { Settings as SettingsIcon, Moon, Sun, Monitor, ArrowLeft, Menu } from "lucide-react"
+import { Settings as SettingsIcon, Moon, Sun, Monitor, ArrowLeft, Menu, Check } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
 import { usePlatform } from "@/hooks/usePlatform"
+import { cn } from "@/lib/utils"
 
 export default function SettingsPage() {
-  const { theme, setTheme, toggleSidebar } = useAppStore()
+  const { toggleSidebar } = useAppStore()
+  const { mode, color, setMode, setColor } = useThemeStore()
   const navigate = useNavigate()
   const { isDesktop, isMobileView } = usePlatform()
+
+  const themeModes: { value: ThemeMode; label: string; icon: React.ReactNode }[] = [
+    { value: "light", label: "浅色", icon: <Sun className="w-4 h-4" /> },
+    { value: "dark", label: "深色", icon: <Moon className="w-4 h-4" /> },
+    { value: "system", label: "跟随系统", icon: <Monitor className="w-4 h-4" /> },
+  ]
+
+  const themeColorOptions: { value: ThemeColor; label: string; color: string }[] = [
+    { value: "default", label: "默认蓝", color: themeColors.default.primary },
+    { value: "purple", label: "活力紫", color: themeColors.purple.primary },
+    { value: "green", label: "清新绿", color: themeColors.green.primary },
+    { value: "orange", label: "活力橙", color: themeColors.orange.primary },
+    { value: "rose", label: "浪漫玫瑰", color: themeColors.rose.primary },
+    { value: "slate", label: "商务灰", color: themeColors.slate.primary },
+  ]
 
   return (
     <div className="flex flex-col h-full">
@@ -30,42 +48,56 @@ export default function SettingsPage() {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-4 sm:p-6 scrollbar-thin">
-        <div className="max-w-2xl mx-auto space-y-6">
+        <div className="max-w-2xl mx-auto space-y-8">
           {/* Theme Settings */}
-          <section className="space-y-4">
+          <section className="space-y-6">
             <h2 className="text-base sm:text-lg font-semibold">外观设置</h2>
+            
+            {/* 主题模式 */}
             <div className="space-y-3">
-              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-                <span className="text-sm sm:text-base">主题</span>
-                <div className="flex flex-wrap gap-2">
+              <label className="text-sm font-medium text-muted-foreground">主题模式</label>
+              <div className="flex flex-wrap gap-2">
+                {themeModes.map((themeMode) => (
                   <Button
-                    variant={theme === "light" ? "default" : "outline"}
+                    key={themeMode.value}
+                    variant={mode === themeMode.value ? "default" : "outline"}
                     size="sm"
-                    onClick={() => setTheme("light")}
+                    onClick={() => setMode(themeMode.value)}
                     className="flex-1 sm:flex-none"
                   >
-                    <Sun className="w-4 h-4 mr-2" />
-                    浅色
+                    {themeMode.icon}
+                    <span className="ml-2">{themeMode.label}</span>
                   </Button>
-                  <Button
-                    variant={theme === "dark" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setTheme("dark")}
-                    className="flex-1 sm:flex-none"
+                ))}
+              </div>
+            </div>
+
+            {/* 主题配色 */}
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-muted-foreground">主题配色</label>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                {themeColorOptions.map((themeColor) => (
+                  <button
+                    key={themeColor.value}
+                    onClick={() => setColor(themeColor.value)}
+                    className={cn(
+                      "relative flex flex-col items-center gap-2 p-3 rounded-lg border-2 transition-all",
+                      color === themeColor.value
+                        ? "border-primary bg-primary/5"
+                        : "border-border hover:border-primary/50"
+                    )}
                   >
-                    <Moon className="w-4 h-4 mr-2" />
-                    深色
-                  </Button>
-                  <Button
-                    variant={theme === "system" ? "default" : "outline"}
-                    size="sm"
-                    onClick={() => setTheme("system")}
-                    className="flex-1 sm:flex-none"
-                  >
-                    <Monitor className="w-4 h-4 mr-2" />
-                    跟随系统
-                  </Button>
-                </div>
+                    <div
+                      className="w-8 h-8 rounded-full flex items-center justify-center"
+                      style={{ backgroundColor: themeColor.color }}
+                    >
+                      {color === themeColor.value && (
+                        <Check className="w-4 h-4 text-white" />
+                      )}
+                    </div>
+                    <span className="text-xs">{themeColor.label}</span>
+                  </button>
+                ))}
               </div>
             </div>
           </section>
@@ -127,8 +159,8 @@ export default function SettingsPage() {
           <section className="space-y-4">
             <h2 className="text-base sm:text-lg font-semibold">关于</h2>
             <div className="space-y-2 text-xs sm:text-sm text-muted-foreground">
-              <p>Next Chat Box v1.0.0</p>
-              <p>基于 Tauri + React + TypeScript 构建的跨平台聊天应用</p>
+              <p>Next AI v0.1.0</p>
+              <p>基于 Tauri + React + TypeScript 构建的跨平台 AI 聊天应用</p>
             </div>
           </section>
         </div>

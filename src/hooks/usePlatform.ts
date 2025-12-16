@@ -13,6 +13,9 @@ export function usePlatform(): PlatformInfo & {
   isDesktop: boolean
   isWeb: boolean
   isMobileView: boolean
+  isMacOS: boolean
+  isWindows: boolean
+  isLinux: boolean
 } {
   const [platformInfo, setPlatformInfo] = useState<PlatformInfo>(getPlatformInfo)
 
@@ -39,6 +42,9 @@ export function usePlatform(): PlatformInfo & {
     isDesktop: platformInfo.platform === "desktop",
     isWeb: platformInfo.platform === "web",
     isMobileView: platformInfo.isMobile || platformInfo.breakpoint === "xs" || platformInfo.breakpoint === "sm",
+    isMacOS: platformInfo.isMacOS,
+    isWindows: platformInfo.isWindows,
+    isLinux: platformInfo.isLinux,
   }
 }
 

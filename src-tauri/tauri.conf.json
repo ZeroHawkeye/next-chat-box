@@ -13,8 +13,18 @@
     "windows": [
       {
         "title": "Next AI",
-        "width": 800,
-        "height": 600
+        "width": 1200,
+        "height": 800,
+        "minWidth": 800,
+        "minHeight": 600,
+        "center": true,
+        "decorations": false,
+        "transparent": false,
+        "shadow": true,
+        "visible": true,
+        "resizable": true,
+        "fullscreen": false,
+        "titleBarStyle": "Overlay"
       }
     ],
     "security": {

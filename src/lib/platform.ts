@@ -5,6 +5,7 @@
 
 export type Platform = "desktop" | "web" | "mobile"
 export type DeviceType = "phone" | "tablet" | "desktop"
+export type OperatingSystem = "windows" | "macos" | "linux" | "ios" | "android" | "unknown"
 
 /**
  * 检测是否在 Tauri 环境中运行
@@ -38,6 +39,43 @@ export function isTablet(): boolean {
 export function isTouchDevice(): boolean {
   if (typeof window === "undefined") return false
   return "ontouchstart" in window || navigator.maxTouchPoints > 0
+}
+
+/**
+ * 检测操作系统
+ */
+export function getOperatingSystem(): OperatingSystem {
+  if (typeof navigator === "undefined") return "unknown"
+  
+  const ua = navigator.userAgent.toLowerCase()
+  const platform = navigator.platform?.toLowerCase() || ""
+  
+  // 检测 iOS
+  if (/iphone|ipad|ipod/.test(ua) || (platform === "macintel" && navigator.maxTouchPoints > 1)) {
+    return "ios"
+  }
+  
+  // 检测 Android
+  if (/android/.test(ua)) {
+    return "android"
+  }
+  
+  // 检测 macOS
+  if (/macintosh|mac os x/.test(ua) || platform.startsWith("mac")) {
+    return "macos"
+  }
+  
+  // 检测 Windows
+  if (/win32|win64|windows/.test(ua) || platform.startsWith("win")) {
+    return "windows"
+  }
+  
+  // 检测 Linux
+  if (/linux/.test(ua) || platform.startsWith("linux")) {
+    return "linux"
+  }
+  
+  return "unknown"
 }
 
 /**
@@ -89,10 +127,14 @@ export function getBreakpoint(): "xs" | "sm" | "md" | "lg" | "xl" | "2xl" {
 export interface PlatformInfo {
   platform: Platform
   deviceType: DeviceType
+  os: OperatingSystem
   isTauri: boolean
   isMobile: boolean
   isTablet: boolean
   isTouch: boolean
+  isMacOS: boolean
+  isWindows: boolean
+  isLinux: boolean
   breakpoint: "xs" | "sm" | "md" | "lg" | "xl" | "2xl"
 }
 
@@ -100,13 +142,18 @@ export interface PlatformInfo {
  * 获取完整的平台信息
  */
 export function getPlatformInfo(): PlatformInfo {
+  const os = getOperatingSystem()
   return {
     platform: getPlatform(),
     deviceType: getDeviceType(),
+    os,
     isTauri: isTauri(),
     isMobile: isMobileDevice(),
     isTablet: isTablet(),
     isTouch: isTouchDevice(),
+    isMacOS: os === "macos",
+    isWindows: os === "windows",
+    isLinux: os === "linux",
     breakpoint: getBreakpoint(),
   }
 }

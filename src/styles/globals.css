@@ -3,50 +3,162 @@
 @tailwind utilities;
 
 @layer base {
+  /* ===== 基础主题变量 (Light Mode) ===== */
   :root {
+    /* 背景色 */
     --background: 0 0% 100%;
     --foreground: 222.2 84% 4.9%;
+    
+    /* 卡片 */
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
+    
+    /* 弹出层 */
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
+    
+    /* 主色调 - 默认蓝色 */
     --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
+    
+    /* 次要色 */
     --secondary: 210 40% 96%;
     --secondary-foreground: 222.2 84% 4.9%;
+    
+    /* 静音色 */
     --muted: 210 40% 96%;
     --muted-foreground: 215.4 16.3% 46.9%;
+    
+    /* 强调色 */
     --accent: 210 40% 96%;
     --accent-foreground: 222.2 84% 4.9%;
+    
+    /* 危险色 */
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
+    
+    /* 边框和输入框 */
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
     --ring: 221.2 83.2% 53.3%;
+    
+    /* 圆角 */
     --radius: 0.5rem;
+    
+    /* 侧边栏 */
+    --sidebar: 210 40% 98%;
+    --sidebar-foreground: 222.2 84% 4.9%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-accent: 210 40% 96%;
+    --sidebar-accent-foreground: 222.2 84% 4.9%;
+    
+    /* 标题栏 */
+    --titlebar: 0 0% 100%;
+    --titlebar-foreground: 222.2 84% 4.9%;
+    --titlebar-border: 214.3 31.8% 91.4%;
   }
 
+  /* ===== 深色主题变量 ===== */
   .dark {
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
+    
     --card: 222.2 84% 4.9%;
     --card-foreground: 210 40% 98%;
+    
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
+    
     --primary: 217.2 91.2% 59.8%;
     --primary-foreground: 222.2 84% 4.9%;
+    
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
+    
     --muted: 217.2 32.6% 17.5%;
     --muted-foreground: 215 20.2% 65.1%;
+    
     --accent: 217.2 32.6% 17.5%;
     --accent-foreground: 210 40% 98%;
+    
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
+    
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 224.3 76.3% 94.1%;
+    
+    /* 侧边栏 */
+    --sidebar: 222.2 47% 8%;
+    --sidebar-foreground: 210 40% 98%;
+    --sidebar-border: 217.2 32.6% 17.5%;
+    --sidebar-accent: 217.2 32.6% 17.5%;
+    --sidebar-accent-foreground: 210 40% 98%;
+    
+    /* 标题栏 */
+    --titlebar: 222.2 47% 6%;
+    --titlebar-foreground: 210 40% 98%;
+    --titlebar-border: 217.2 32.6% 17.5%;
   }
+
+}
+
+/* ===== 主题配色方案 ===== */
+/* 注意：配色方案需要在 @layer base 外部定义，以确保优先级正确 */
+
+/* 紫色主题 - 浅色 */
+:root.theme-purple {
+  --primary: 262.1 83.3% 57.8%;
+  --ring: 262.1 83.3% 57.8%;
+}
+/* 紫色主题 - 深色 */
+:root.theme-purple.dark {
+  --primary: 263.4 70% 50.4%;
+  --ring: 263.4 70% 50.4%;
+}
+
+/* 绿色主题 - 浅色 */
+:root.theme-green {
+  --primary: 160.1 84.1% 39.4%;
+  --ring: 160.1 84.1% 39.4%;
+}
+/* 绿色主题 - 深色 */
+:root.theme-green.dark {
+  --primary: 158.1 64.4% 51.6%;
+  --ring: 158.1 64.4% 51.6%;
+}
+
+/* 橙色主题 - 浅色 */
+:root.theme-orange {
+  --primary: 24.6 95% 53.1%;
+  --ring: 24.6 95% 53.1%;
+}
+/* 橙色主题 - 深色 */
+:root.theme-orange.dark {
+  --primary: 20.5 90.2% 48.2%;
+  --ring: 20.5 90.2% 48.2%;
+}
+
+/* 玫瑰色主题 - 浅色 */
+:root.theme-rose {
+  --primary: 350.4 89.2% 60.2%;
+  --ring: 350.4 89.2% 60.2%;
+}
+/* 玫瑰色主题 - 深色 */
+:root.theme-rose.dark {
+  --primary: 346.8 77.2% 49.8%;
+  --ring: 346.8 77.2% 49.8%;
+}
+
+/* 石板灰主题 - 浅色 */
+:root.theme-slate {
+  --primary: 215.4 16.3% 46.9%;
+  --ring: 215.4 16.3% 46.9%;
+}
+/* 石板灰主题 - 深色 */
+:root.theme-slate.dark {
+  --primary: 217.9 10.6% 64.9%;
+  --ring: 217.9 10.6% 64.9%;
 }
 
 @layer base {
@@ -57,14 +169,27 @@
   html {
     /* 防止 iOS 橡皮筋效果 */
     overscroll-behavior: none;
+    /* 平滑滚动 */
+    scroll-behavior: smooth;
   }
 
   body {
     @apply bg-background text-foreground;
-    /* 防止文字选中 (移动端) */
+    /* 防止文字选中高亮 (移动端) */
     -webkit-tap-highlight-color: transparent;
-    /* 平滑滚动 */
-    scroll-behavior: smooth;
+    /* 字体平滑 */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* 防止文本大小调整 */
+    text-size-adjust: 100%;
+    /* 过渡效果 */
+    transition: background-color 0.2s ease, color 0.2s ease;
+  }
+
+  /* 禁用选中 (桌面端标题栏等) */
+  .select-none {
+    user-select: none;
+    -webkit-user-select: none;
   }
 
   /* 安全区域适配 (iOS) */
@@ -86,7 +211,7 @@
 }
 
 @layer components {
-  /* 桌面端窗口拖拽区域 (Tauri) */
+  /* ===== 标题栏样式 ===== */
   .titlebar-drag {
     -webkit-app-region: drag;
   }
@@ -95,7 +220,7 @@
     -webkit-app-region: no-drag;
   }
 
-  /* 滚动条样式 */
+  /* ===== 滚动条样式 ===== */
   .scrollbar-thin {
     scrollbar-width: thin;
     scrollbar-color: hsl(var(--muted)) transparent;
@@ -128,10 +253,44 @@
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
+
+  /* ===== 侧边栏样式 ===== */
+  .sidebar {
+    background-color: hsl(var(--sidebar));
+    color: hsl(var(--sidebar-foreground));
+    border-color: hsl(var(--sidebar-border));
+  }
+
+  .sidebar-item {
+    @apply px-3 py-2 rounded-lg transition-colors cursor-pointer;
+  }
+
+  .sidebar-item:hover {
+    background-color: hsl(var(--sidebar-accent));
+    color: hsl(var(--sidebar-accent-foreground));
+  }
+
+  .sidebar-item.active {
+    background-color: hsl(var(--primary) / 0.1);
+    color: hsl(var(--primary));
+  }
+
+  /* ===== 玻璃态效果 ===== */
+  .glass {
+    background: hsl(var(--background) / 0.8);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .glass-strong {
+    background: hsl(var(--background) / 0.95);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+  }
 }
 
 @layer utilities {
-  /* 文字截断 */
+  /* ===== 文字截断 ===== */
   .line-clamp-1 {
     display: -webkit-box;
     -webkit-line-clamp: 1;
@@ -153,14 +312,77 @@
     overflow: hidden;
   }
 
-  /* 玻璃态效果 */
-  .glass {
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+  /* ===== 动画工具类 ===== */
+  .animate-in {
+    animation-duration: 0.2s;
+    animation-timing-function: ease-out;
+    animation-fill-mode: both;
   }
 
-  .dark .glass {
-    background: rgba(0, 0, 0, 0.2);
+  .animate-out {
+    animation-duration: 0.15s;
+    animation-timing-function: ease-in;
+    animation-fill-mode: both;
+  }
+
+  .fade-in {
+    animation-name: fade-in;
+  }
+
+  .fade-out {
+    animation-name: fade-out;
+  }
+
+  .slide-in-from-left {
+    animation-name: slide-in-from-left;
+  }
+
+  .slide-out-to-left {
+    animation-name: slide-out-to-left;
+  }
+
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes fade-out {
+    from {
+      opacity: 1;
+    }
+    to {
+      opacity: 0;
+    }
+  }
+
+  @keyframes slide-in-from-left {
+    from {
+      transform: translateX(-100%);
+    }
+    to {
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slide-out-to-left {
+    from {
+      transform: translateX(0);
+    }
+    to {
+      transform: translateX(-100%);
+    }
+  }
+
+  /* ===== 主题色文本/背景工具类 ===== */
+  .text-primary-gradient {
+    @apply bg-gradient-to-r from-primary to-primary/80 bg-clip-text text-transparent;
+  }
+
+  .bg-primary-gradient {
+    @apply bg-gradient-to-r from-primary to-primary/80;
   }
 }
