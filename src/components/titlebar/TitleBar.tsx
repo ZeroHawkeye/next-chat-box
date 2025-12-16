@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react"
 import { getCurrentWindow, Window } from "@tauri-apps/api/window"
-import { Minus, Square, X, Copy } from "lucide-react"
+import { Minus, X, Copy, Maximize2 } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { isTauri, getOperatingSystem } from "@/lib/platform"
 
@@ -9,24 +9,27 @@ interface TitleBarProps {
   title?: string
 }
 
-// 在模块级别检测环境，确保一致性
+// 在模块级别检测环境
 const IS_TAURI = isTauri()
 const IS_MAC = getOperatingSystem() === "macos"
 
 /**
- * 自定义标题栏组件
- * - 支持窗口拖拽（通过 startDragging API）
- * - 窗口控制按钮（最小化、最大化、关闭）
- * - 跨平台适配（Windows/macOS 按钮位置不同）
+ * 2025 现代化标题栏组件
+ * 
+ * 设计特点:
+ * - 毛玻璃背景效果
+ * - 平滑的按钮动画
+ * - 精细的悬浮效果
+ * - 跨平台适配
  */
-export function TitleBar({ className, title = "Next AI" }: TitleBarProps) {
+export function TitleBar({ className, title = "Next Chat Box" }: TitleBarProps) {
   const [isMaximized, setIsMaximized] = useState(false)
+  const [isHovering, setIsHovering] = useState<string | null>(null)
   const appWindowRef = useRef<Window | null>(null)
 
   useEffect(() => {
     if (!IS_TAURI) return
 
-    // 获取窗口实例
     const win = getCurrentWindow()
     appWindowRef.current = win
 
@@ -41,7 +44,6 @@ export function TitleBar({ className, title = "Next AI" }: TitleBarProps) {
 
     checkMaximized()
 
-    // 监听窗口状态变化
     let unlisten: (() => void) | undefined
 
     const setupListener = async () => {
@@ -66,7 +68,6 @@ export function TitleBar({ className, title = "Next AI" }: TitleBarProps) {
     }
   }, [])
 
-  // 开始拖拽窗口
   const startDrag = async () => {
     const win = appWindowRef.current
     if (!win) return
@@ -77,7 +78,6 @@ export function TitleBar({ className, title = "Next AI" }: TitleBarProps) {
     }
   }
 
-  // 双击切换最大化
   const toggleMaximize = async () => {
     const win = appWindowRef.current
     if (!win) return
@@ -116,13 +116,14 @@ export function TitleBar({ className, title = "Next AI" }: TitleBarProps) {
   return (
     <header
       className={cn(
-        "h-9 flex items-center select-none bg-background border-b border-border/50 flex-shrink-0",
+        "h-10 flex items-center select-none flex-shrink-0",
+        "bg-titlebar/80 backdrop-blur-xl",
+        "border-b border-titlebar-border/30",
+        "transition-colors duration-200",
         className
       )}
       onMouseDown={(e) => {
-        // 只处理左键
         if (e.button !== 0) return
-        // 双击最大化
         if (e.detail === 2) {
           toggleMaximize()
         } else {
@@ -130,14 +131,20 @@ export function TitleBar({ className, title = "Next AI" }: TitleBarProps) {
         }
       }}
     >
-      {/* macOS: 按钮在左侧，需要留出空间给系统交通灯按钮 */}
+      {/* macOS: 按钮在左侧 */}
       {IS_MAC && <div className="w-[70px] flex-shrink-0" />}
 
-      {/* 标题 - 可拖拽区域 */}
-      <div className="flex-1 flex items-center px-3 h-full">
-        <span className="text-xs font-medium text-muted-foreground">
-          {title}
-        </span>
+      {/* 标题区域 */}
+      <div className="flex-1 flex items-center px-4 h-full">
+        {/* Logo */}
+        <div className="flex items-center gap-2">
+          <div className="w-5 h-5 rounded-md bg-gradient-primary flex items-center justify-center">
+            <span className="text-[10px] font-bold text-white">N</span>
+          </div>
+          <span className="text-xs font-medium text-muted-foreground">
+            {title}
+          </span>
+        </div>
       </div>
 
       {/* Windows/Linux: 按钮在右侧 */}
@@ -145,30 +152,34 @@ export function TitleBar({ className, title = "Next AI" }: TitleBarProps) {
         <div className="flex items-center flex-shrink-0 h-full">
           <WindowButton
             onClick={handleMinimize}
-            hoverClass="hover:bg-secondary"
+            isHovering={isHovering === "minimize"}
+            onHoverChange={(hovering) => setIsHovering(hovering ? "minimize" : null)}
             aria-label="最小化"
           >
-            <Minus className="w-4 h-4" />
+            <Minus className="w-4 h-4" strokeWidth={1.5} />
           </WindowButton>
           
           <WindowButton
             onClick={toggleMaximize}
-            hoverClass="hover:bg-secondary"
+            isHovering={isHovering === "maximize"}
+            onHoverChange={(hovering) => setIsHovering(hovering ? "maximize" : null)}
             aria-label={isMaximized ? "还原" : "最大化"}
           >
             {isMaximized ? (
-              <Copy className="w-3.5 h-3.5 rotate-180" />
+              <Copy className="w-3.5 h-3.5 rotate-180" strokeWidth={1.5} />
             ) : (
-              <Square className="w-3.5 h-3.5" />
+              <Maximize2 className="w-3.5 h-3.5" strokeWidth={1.5} />
             )}
           </WindowButton>
           
           <WindowButton
             onClick={handleClose}
-            hoverClass="hover:bg-red-500 hover:text-white"
+            variant="close"
+            isHovering={isHovering === "close"}
+            onHoverChange={(hovering) => setIsHovering(hovering ? "close" : null)}
             aria-label="关闭"
           >
-            <X className="w-4 h-4" />
+            <X className="w-4 h-4" strokeWidth={1.5} />
           </WindowButton>
         </div>
       )}
@@ -178,12 +189,21 @@ export function TitleBar({ className, title = "Next AI" }: TitleBarProps) {
 
 interface WindowButtonProps {
   onClick: () => void
-  hoverClass?: string
   children: React.ReactNode
   "aria-label": string
+  variant?: "default" | "close"
+  isHovering?: boolean
+  onHoverChange?: (hovering: boolean) => void
 }
 
-function WindowButton({ onClick, hoverClass, children, "aria-label": ariaLabel }: WindowButtonProps) {
+function WindowButton({ 
+  onClick, 
+  children, 
+  "aria-label": ariaLabel,
+  variant = "default",
+  isHovering,
+  onHoverChange
+}: WindowButtonProps) {
   return (
     <button
       onClick={(e) => {
@@ -193,14 +213,33 @@ function WindowButton({ onClick, hoverClass, children, "aria-label": ariaLabel }
       onMouseDown={(e) => {
         e.stopPropagation()
       }}
+      onMouseEnter={() => onHoverChange?.(true)}
+      onMouseLeave={() => onHoverChange?.(false)}
       className={cn(
-        "w-12 h-full flex items-center justify-center transition-colors",
-        "text-foreground/70 hover:text-foreground",
-        hoverClass
+        "w-12 h-full flex items-center justify-center",
+        "transition-all duration-150",
+        "text-muted-foreground",
+        // 默认按钮样式
+        variant === "default" && [
+          "hover:bg-secondary/80 hover:text-foreground",
+          isHovering && "bg-secondary/80 text-foreground",
+        ],
+        // 关闭按钮样式
+        variant === "close" && [
+          "hover:bg-red-500 hover:text-white",
+          isHovering && "bg-red-500 text-white",
+        ],
+        // 按下效果
+        "active:opacity-70"
       )}
       aria-label={ariaLabel}
     >
-      {children}
+      <span className={cn(
+        "transition-transform duration-150",
+        isHovering && "scale-110"
+      )}>
+        {children}
+      </span>
     </button>
   )
 }
