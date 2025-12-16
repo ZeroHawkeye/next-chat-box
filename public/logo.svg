@@ -1,0 +1,55 @@
+<svg width="256" height="256" viewBox="0 0 256 256" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 主渐变 - 蓝紫色科技感 -->
+    <linearGradient id="mainGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="50%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+    <!-- 次要渐变 - 青蓝色 -->
+    <linearGradient id="secondaryGradient" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+    <!-- 高光渐变 -->
+    <linearGradient id="highlightGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.3"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0"/>
+    </linearGradient>
+    <!-- 阴影 -->
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#6366F1" flood-opacity="0.3"/>
+    </filter>
+  </defs>
+  
+  <!-- 背景圆形 -->
+  <circle cx="128" cy="128" r="120" fill="url(#mainGradient)" filter="url(#shadow)"/>
+  
+  <!-- 内部高光 -->
+  <ellipse cx="128" cy="90" rx="80" ry="50" fill="url(#highlightGradient)"/>
+  
+  <!-- 聊天气泡主体 - 代表AI对话 -->
+  <path d="M68 85C68 71.193 79.193 60 93 60H163C176.807 60 188 71.193 188 85V135C188 148.807 176.807 160 163 160H120L95 185V160H93C79.193 160 68 148.807 68 135V85Z" fill="white"/>
+  
+  <!-- 三个连接节点 - 代表编排/工作流 -->
+  <!-- 节点1 -->
+  <circle cx="105" cy="110" r="14" fill="url(#secondaryGradient)"/>
+  <circle cx="105" cy="110" r="8" fill="white"/>
+  
+  <!-- 节点2 -->
+  <circle cx="150" cy="95" r="14" fill="url(#mainGradient)"/>
+  <circle cx="150" cy="95" r="8" fill="white"/>
+  
+  <!-- 节点3 -->
+  <circle cx="150" cy="130" r="14" fill="url(#secondaryGradient)"/>
+  <circle cx="150" cy="130" r="8" fill="white"/>
+  
+  <!-- 连接线 - 代表工作流连接 -->
+  <path d="M119 110L136 95" stroke="url(#mainGradient)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M119 110L136 130" stroke="url(#secondaryGradient)" stroke-width="3" stroke-linecap="round"/>
+  <path d="M150 109L150 116" stroke="url(#mainGradient)" stroke-width="3" stroke-linecap="round"/>
+  
+  <!-- AI 星光效果 -->
+  <path d="M175 70L178 77L185 80L178 83L175 90L172 83L165 80L172 77Z" fill="white" opacity="0.9"/>
+  <path d="M85 175L87 179L91 181L87 183L85 187L83 183L79 181L83 179Z" fill="white" opacity="0.7"/>
+</svg>

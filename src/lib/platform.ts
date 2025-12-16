@@ -1,0 +1,112 @@
+/**
+ * 平台检测工具
+ * 用于检测当前运行环境: Tauri Desktop / Web / Mobile
+ */
+
+export type Platform = "desktop" | "web" | "mobile"
+export type DeviceType = "phone" | "tablet" | "desktop"
+
+/**
+ * 检测是否在 Tauri 环境中运行
+ */
+export function isTauri(): boolean {
+  return typeof window !== "undefined" && "__TAURI__" in window
+}
+
+/**
+ * 检测是否为移动设备 (基于 User Agent)
+ */
+export function isMobileDevice(): boolean {
+  if (typeof navigator === "undefined") return false
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+    navigator.userAgent
+  )
+}
+
+/**
+ * 检测是否为平板设备
+ */
+export function isTablet(): boolean {
+  if (typeof navigator === "undefined") return false
+  const ua = navigator.userAgent
+  return /iPad|Android(?!.*Mobile)|Tablet/i.test(ua)
+}
+
+/**
+ * 检测是否为触摸设备
+ */
+export function isTouchDevice(): boolean {
+  if (typeof window === "undefined") return false
+  return "ontouchstart" in window || navigator.maxTouchPoints > 0
+}
+
+/**
+ * 获取当前平台类型
+ */
+export function getPlatform(): Platform {
+  // Tauri 桌面应用
+  if (isTauri()) {
+    return "desktop"
+  }
+
+  // 移动设备 (Web 浏览器)
+  if (isMobileDevice()) {
+    return "mobile"
+  }
+
+  // 默认为 Web
+  return "web"
+}
+
+/**
+ * 获取设备类型
+ */
+export function getDeviceType(): DeviceType {
+  if (isTablet()) return "tablet"
+  if (isMobileDevice()) return "phone"
+  return "desktop"
+}
+
+/**
+ * 获取屏幕断点类型
+ */
+export function getBreakpoint(): "xs" | "sm" | "md" | "lg" | "xl" | "2xl" {
+  if (typeof window === "undefined") return "lg"
+
+  const width = window.innerWidth
+
+  if (width < 480) return "xs"
+  if (width < 640) return "sm"
+  if (width < 768) return "md"
+  if (width < 1024) return "lg"
+  if (width < 1280) return "xl"
+  return "2xl"
+}
+
+/**
+ * 平台信息
+ */
+export interface PlatformInfo {
+  platform: Platform
+  deviceType: DeviceType
+  isTauri: boolean
+  isMobile: boolean
+  isTablet: boolean
+  isTouch: boolean
+  breakpoint: "xs" | "sm" | "md" | "lg" | "xl" | "2xl"
+}
+
+/**
+ * 获取完整的平台信息
+ */
+export function getPlatformInfo(): PlatformInfo {
+  return {
+    platform: getPlatform(),
+    deviceType: getDeviceType(),
+    isTauri: isTauri(),
+    isMobile: isMobileDevice(),
+    isTablet: isTablet(),
+    isTouch: isTouchDevice(),
+    breakpoint: getBreakpoint(),
+  }
+}

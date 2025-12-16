@@ -1,0 +1,41 @@
+<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <!-- 主渐变 - 蓝紫色科技感 -->
+    <linearGradient id="mainGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6366F1"/>
+      <stop offset="50%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#A855F7"/>
+    </linearGradient>
+    <!-- 次要渐变 - 青蓝色 -->
+    <linearGradient id="secGrad" x1="0%" y1="100%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#06B6D4"/>
+      <stop offset="100%" stop-color="#3B82F6"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- 圆角矩形背景 -->
+  <rect x="16" y="16" width="480" height="480" rx="96" fill="url(#mainGrad)"/>
+  
+  <!-- 聊天气泡 -->
+  <path d="M136 160C136 138.461 153.461 121 175 121H337C358.539 121 376 138.461 376 160V280C376 301.539 358.539 319 337 319H270L220 369V319H175C153.461 319 136 301.539 136 280V160Z" fill="white"/>
+  
+  <!-- 节点1 - 左 -->
+  <circle cx="200" cy="220" r="28" fill="url(#secGrad)"/>
+  <circle cx="200" cy="220" r="16" fill="white"/>
+  
+  <!-- 节点2 - 右上 -->
+  <circle cx="300" cy="185" r="28" fill="url(#mainGrad)"/>
+  <circle cx="300" cy="185" r="16" fill="white"/>
+  
+  <!-- 节点3 - 右下 -->
+  <circle cx="300" cy="260" r="28" fill="url(#secGrad)"/>
+  <circle cx="300" cy="260" r="16" fill="white"/>
+  
+  <!-- 连接线 -->
+  <path d="M228 220L272 185" stroke="url(#mainGrad)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M228 220L272 260" stroke="url(#secGrad)" stroke-width="6" stroke-linecap="round"/>
+  <path d="M300 213L300 232" stroke="url(#mainGrad)" stroke-width="6" stroke-linecap="round"/>
+  
+  <!-- 星光装饰 -->
+  <path d="M350 130L354 142L366 146L354 150L350 162L346 150L334 146L346 142Z" fill="white" opacity="0.9"/>
+</svg>
