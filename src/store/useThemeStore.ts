@@ -78,6 +78,13 @@ export const themeColors: Record<ThemeColor, ThemeColors> = {
 }
 
 /**
+ * 缩放配置
+ */
+export const ZOOM_MIN = 50
+export const ZOOM_MAX = 250
+export const ZOOM_DEFAULT = 100
+
+/**
  * 主题 Store 状态
  */
 export interface ThemeState {
@@ -89,6 +96,8 @@ export interface ThemeState {
   resolvedTheme: "light" | "dark"
   // 是否已初始化
   initialized: boolean
+  // 界面缩放比例 (50-250)
+  zoom: number
 }
 
 /**
@@ -99,6 +108,8 @@ export interface ThemeActions {
   setMode: (mode: ThemeMode) => void
   // 设置主题配色
   setColor: (color: ThemeColor) => void
+  // 设置缩放比例 (50-250)
+  setZoom: (zoom: number) => void
   // 初始化主题（在应用启动时调用）
   initializeTheme: () => void
   // 获取当前主题配色信息
@@ -116,6 +127,19 @@ function resolveTheme(mode: ThemeMode): "light" | "dark" {
     return "light"
   }
   return mode
+}
+
+/**
+ * 应用缩放比例到 DOM
+ * @param zoom 缩放百分比 (50-250)
+ */
+function applyZoom(zoom: number) {
+  if (typeof document === "undefined") return
+  
+  // 限制范围
+  const clampedZoom = Math.min(Math.max(zoom, ZOOM_MIN), ZOOM_MAX)
+  const root = document.documentElement
+  root.style.fontSize = `${(clampedZoom / 100) * 16}px`
 }
 
 /**
@@ -160,6 +184,7 @@ export const useThemeStore = create<ThemeState & ThemeActions>()(
         color: "default",
         resolvedTheme: "light",
         initialized: false,
+        zoom: ZOOM_DEFAULT,
 
         // 设置主题模式
         setMode: (mode) => {
@@ -174,6 +199,12 @@ export const useThemeStore = create<ThemeState & ThemeActions>()(
           applyTheme(get().resolvedTheme, color)
         },
 
+        // 设置缩放比例
+        setZoom: (zoom) => {
+          set({ zoom })
+          applyZoom(zoom)
+        },
+
         // 初始化主题
         initializeTheme: () => {
           const state = get()
@@ -182,6 +213,7 @@ export const useThemeStore = create<ThemeState & ThemeActions>()(
           const resolvedTheme = resolveTheme(state.mode)
           set({ resolvedTheme, initialized: true })
           applyTheme(resolvedTheme, state.color)
+          applyZoom(state.zoom)
 
           // 监听系统主题变化
           if (typeof window !== "undefined" && state.mode === "system") {
@@ -215,6 +247,7 @@ export const useThemeStore = create<ThemeState & ThemeActions>()(
         partialize: (state) => ({
           mode: state.mode,
           color: state.color,
+          zoom: state.zoom,
         }),
       }
     ),

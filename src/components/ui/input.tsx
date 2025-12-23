@@ -3,81 +3,69 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * 2025 现代化输入框组件
+ * Apple Design System 输入框组件
  * 
  * 设计特点:
- * - 柔和的背景色
- * - 流畅的聚焦动画
- * - 多种变体样式
- * - 前后缀图标支持
- * - 浮动标签支持
+ * - Apple HIG 标准高度 (44px 最小)
+ * - 柔和的圆角和背景
+ * - 精致的聚焦环效果
+ * - 流畅的过渡动画
  */
 const inputVariants = cva(
   [
     "flex w-full",
-    "text-sm text-foreground",
+    "text-body text-foreground",
     "placeholder:text-muted-foreground",
-    "transition-all duration-200 ease-out",
-    "disabled:cursor-not-allowed disabled:opacity-50",
-    "file:border-0 file:bg-transparent file:text-sm file:font-medium",
+    "transition-all duration-fast ease-apple",
+    "disabled:cursor-not-allowed disabled:opacity-40",
+    "file:border-0 file:bg-transparent file:text-body file:font-medium",
   ].join(" "),
   {
     variants: {
       variant: {
-        // 默认 - 柔和背景
+        // 默认 - Apple 搜索框风格
         default: [
-          "h-11 px-4 py-2 rounded-xl",
-          "bg-secondary/50 border border-border/50",
-          "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50",
-          "focus:bg-background",
-          "hover:border-border",
+          "h-11 px-4 rounded-xl",
+          "bg-secondary border-0",
+          "focus:outline-none focus:ring-[3px] focus:ring-primary/20",
         ].join(" "),
         
-        // 轮廓样式
-        outline: [
-          "h-11 px-4 py-2 rounded-xl",
-          "bg-transparent border-2 border-border",
-          "focus:outline-none focus:border-primary",
-          "hover:border-muted-foreground/50",
+        // 带边框
+        bordered: [
+          "h-11 px-4 rounded-xl",
+          "bg-background border border-border",
+          "focus:outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/15",
+          "hover:border-border-secondary",
         ].join(" "),
         
         // 填充样式
         filled: [
-          "h-11 px-4 py-2 rounded-xl",
-          "bg-muted border border-transparent",
-          "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:bg-background focus:border-primary/50",
-        ].join(" "),
-        
-        // 玻璃态
-        glass: [
-          "h-11 px-4 py-2 rounded-xl",
-          "bg-background/50 backdrop-blur-sm",
-          "border border-border/30",
-          "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50",
-          "focus:bg-background/80",
+          "h-11 px-4 rounded-xl",
+          "bg-muted border-0",
+          "focus:outline-none focus:ring-[3px] focus:ring-primary/20 focus:bg-background",
         ].join(" "),
         
         // 下划线样式
         underline: [
-          "h-11 px-1 py-2",
-          "bg-transparent border-b-2 border-border rounded-none",
+          "h-11 px-1 rounded-none",
+          "bg-transparent border-b border-border",
           "focus:outline-none focus:border-primary",
-          "hover:border-muted-foreground/50",
+          "hover:border-border-secondary",
         ].join(" "),
         
-        // 无边框 - 用于内联编辑
-        ghost: [
-          "h-auto px-2 py-1 rounded-lg",
-          "bg-transparent border border-transparent",
-          "focus:outline-none focus:bg-secondary/50 focus:border-border/50",
+        // 纯净样式 - 用于内联编辑
+        plain: [
+          "h-auto px-2 py-1.5 rounded-lg",
+          "bg-transparent border-0",
+          "focus:outline-none focus:bg-secondary/50",
           "hover:bg-secondary/30",
         ].join(" "),
       },
       inputSize: {
-        sm: "h-9 px-3 text-sm rounded-lg",
+        sm: "h-9 px-3 text-subheadline rounded-lg",
         default: "",
-        lg: "h-12 px-5 text-base rounded-xl",
-        xl: "h-14 px-6 text-lg rounded-2xl",
+        lg: "h-12 px-5 text-body rounded-xl",
+        xl: "h-14 px-6 text-body rounded-2xl",
       },
     },
     defaultVariants: {
@@ -108,35 +96,38 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     helperText,
     ...props 
   }, ref) => {
-    // 带图标的输入框
+    const inputClasses = cn(
+      inputVariants({ variant, inputSize }),
+      leftIcon && "pl-11",
+      rightIcon && "pr-11",
+      error && "ring-[3px] ring-destructive/20 border-destructive focus:ring-destructive/20 focus:border-destructive",
+      className
+    )
+
     if (leftIcon || rightIcon) {
       return (
-        <div className="relative">
-          {leftIcon && (
-            <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-              {leftIcon}
-            </div>
-          )}
-          <input
-            type={type}
-            className={cn(
-              inputVariants({ variant, inputSize }),
-              leftIcon && "pl-10",
-              rightIcon && "pr-10",
-              error && "border-destructive focus:border-destructive focus:ring-destructive/20",
-              className
+        <div className="space-y-1.5">
+          <div className="relative">
+            {leftIcon && (
+              <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
+                {leftIcon}
+              </div>
             )}
-            ref={ref}
-            {...props}
-          />
-          {rightIcon && (
-            <div className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-              {rightIcon}
-            </div>
-          )}
+            <input
+              type={type}
+              className={inputClasses}
+              ref={ref}
+              {...props}
+            />
+            {rightIcon && (
+              <div className="absolute right-3.5 top-1/2 -translate-y-1/2 text-muted-foreground">
+                {rightIcon}
+              </div>
+            )}
+          </div>
           {helperText && (
             <p className={cn(
-              "mt-1.5 text-xs",
+              "text-caption-1 px-1",
               error ? "text-destructive" : "text-muted-foreground"
             )}>
               {helperText}
@@ -147,20 +138,16 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     }
 
     return (
-      <div>
+      <div className="space-y-1.5">
         <input
           type={type}
-          className={cn(
-            inputVariants({ variant, inputSize }),
-            error && "border-destructive focus:border-destructive focus:ring-destructive/20",
-            className
-          )}
+          className={inputClasses}
           ref={ref}
           {...props}
         />
         {helperText && (
           <p className={cn(
-            "mt-1.5 text-xs",
+            "text-caption-1 px-1",
             error ? "text-destructive" : "text-muted-foreground"
           )}>
             {helperText}
@@ -172,81 +159,27 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
 )
 Input.displayName = "Input"
 
-// 浮动标签输入框
-interface FloatingLabelInputProps extends InputProps {
-  label: string
-}
-
-const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInputProps>(
-  ({ className, label, id, ...props }, ref) => {
-    const inputId = id || React.useId()
-    
-    return (
-      <div className="relative">
-        <input
-          ref={ref}
-          id={inputId}
-          className={cn(
-            "peer w-full h-14 px-4 pt-5 pb-2 rounded-xl",
-            "bg-secondary/50 border border-border/50",
-            "text-foreground placeholder-transparent",
-            "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50",
-            "focus:bg-background",
-            "transition-all duration-200",
-            className
-          )}
-          placeholder={label}
-          {...props}
-        />
-        <label
-          htmlFor={inputId}
-          className={cn(
-            "absolute left-4 top-1/2 -translate-y-1/2",
-            "text-muted-foreground text-sm",
-            "transition-all duration-200 pointer-events-none",
-            "peer-focus:top-3.5 peer-focus:text-xs peer-focus:text-primary",
-            "peer-[:not(:placeholder-shown)]:top-3.5 peer-[:not(:placeholder-shown)]:text-xs"
-          )}
-        >
-          {label}
-        </label>
-      </div>
-    )
-  }
-)
-FloatingLabelInput.displayName = "FloatingLabelInput"
-
-// 搜索输入框
-interface SearchInputProps extends Omit<InputProps, "leftIcon"> {
+// Apple 风格搜索框
+interface SearchInputProps extends Omit<InputProps, "leftIcon" | "variant"> {
   onClear?: () => void
 }
 
 const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
-  ({ className, value, onClear, ...props }, ref) => {
+  ({ className, value, onClear, inputSize, ...props }, ref) => {
     return (
       <div className="relative">
-        <div className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground">
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-            />
-          </svg>
+        <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none">
+          <SearchIcon />
         </div>
         <input
           ref={ref}
           type="search"
           className={cn(
-            inputVariants({ variant: "default" }),
-            "pl-10",
-            value && onClear && "pr-10",
+            inputVariants({ variant: "default", inputSize }),
+            "pl-11",
+            value && onClear && "pr-11",
+            // 隐藏原生清除按钮
+            "[&::-webkit-search-cancel-button]:hidden",
             className
           )}
           value={value}
@@ -256,21 +189,9 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
           <button
             type="button"
             onClick={onClear}
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+            className="absolute right-3 top-1/2 -translate-y-1/2 p-0.5 rounded-full bg-muted-foreground/20 text-muted-foreground hover:bg-muted-foreground/30 transition-colors"
           >
-            <svg
-              className="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
+            <ClearIcon />
           </button>
         )}
       </div>
@@ -278,6 +199,61 @@ const SearchInput = React.forwardRef<HTMLInputElement, SearchInputProps>(
   }
 )
 SearchInput.displayName = "SearchInput"
+
+// 浮动标签输入框
+interface FloatingLabelInputProps extends Omit<InputProps, "placeholder"> {
+  label: string
+}
+
+const FloatingLabelInput = React.forwardRef<HTMLInputElement, FloatingLabelInputProps>(
+  ({ className, label, id, error, helperText, ...props }, ref) => {
+    const inputId = id || React.useId()
+    
+    return (
+      <div className="space-y-1.5">
+        <div className="relative">
+          <input
+            ref={ref}
+            id={inputId}
+            className={cn(
+              "peer w-full h-14 px-4 pt-5 pb-2 rounded-xl",
+              "bg-secondary text-foreground",
+              "placeholder-transparent",
+              "focus:outline-none focus:ring-[3px] focus:ring-primary/20",
+              "transition-all duration-fast ease-apple",
+              error && "ring-[3px] ring-destructive/20",
+              className
+            )}
+            placeholder={label}
+            {...props}
+          />
+          <label
+            htmlFor={inputId}
+            className={cn(
+              "absolute left-4 top-1/2 -translate-y-1/2",
+              "text-muted-foreground text-body",
+              "transition-all duration-fast ease-apple pointer-events-none origin-left",
+              "peer-focus:top-3.5 peer-focus:scale-[0.75] peer-focus:text-primary",
+              "peer-[:not(:placeholder-shown)]:top-3.5 peer-[:not(:placeholder-shown)]:scale-[0.75]",
+              error && "peer-focus:text-destructive"
+            )}
+          >
+            {label}
+          </label>
+        </div>
+        {helperText && (
+          <p className={cn(
+            "text-caption-1 px-1",
+            error ? "text-destructive" : "text-muted-foreground"
+          )}>
+            {helperText}
+          </p>
+        )}
+      </div>
+    )
+  }
+)
+FloatingLabelInput.displayName = "FloatingLabelInput"
 
 // 文本域
 interface TextareaProps
@@ -289,19 +265,18 @@ interface TextareaProps
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ className, error, helperText, ...props }, ref) => {
     return (
-      <div>
+      <div className="space-y-1.5">
         <textarea
           className={cn(
             "flex min-h-[120px] w-full rounded-xl",
             "px-4 py-3",
-            "bg-secondary/50 border border-border/50",
-            "text-sm text-foreground placeholder:text-muted-foreground",
-            "focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary/50",
-            "focus:bg-background",
-            "transition-all duration-200",
-            "disabled:cursor-not-allowed disabled:opacity-50",
+            "bg-secondary",
+            "text-body text-foreground placeholder:text-muted-foreground",
+            "focus:outline-none focus:ring-[3px] focus:ring-primary/20",
+            "transition-all duration-fast ease-apple",
+            "disabled:cursor-not-allowed disabled:opacity-40",
             "resize-none",
-            error && "border-destructive focus:border-destructive focus:ring-destructive/20",
+            error && "ring-[3px] ring-destructive/20",
             className
           )}
           ref={ref}
@@ -309,7 +284,7 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
         />
         {helperText && (
           <p className={cn(
-            "mt-1.5 text-xs",
+            "text-caption-1 px-1",
             error ? "text-destructive" : "text-muted-foreground"
           )}>
             {helperText}
@@ -321,4 +296,62 @@ const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(
 )
 Textarea.displayName = "Textarea"
 
-export { Input, FloatingLabelInput, SearchInput, Textarea, inputVariants }
+// 表单字段组
+interface FormFieldProps {
+  label?: string
+  required?: boolean
+  children: React.ReactNode
+  className?: string
+}
+
+function FormField({ label, required, children, className }: FormFieldProps) {
+  return (
+    <div className={cn("space-y-2", className)}>
+      {label && (
+        <label className="text-subheadline font-medium text-foreground px-1">
+          {label}
+          {required && <span className="text-destructive ml-0.5">*</span>}
+        </label>
+      )}
+      {children}
+    </div>
+  )
+}
+
+// 图标组件
+function SearchIcon() {
+  return (
+    <svg width="17" height="17" viewBox="0 0 17 17" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M7.5 13C10.5376 13 13 10.5376 13 7.5C13 4.46243 10.5376 2 7.5 2C4.46243 2 2 4.46243 2 7.5C2 10.5376 4.46243 13 7.5 13Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+      <path
+        d="M15 15L11.5 11.5"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+function ClearIcon() {
+  return (
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path
+        d="M9 3L3 9M3 3L9 9"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
+export { Input, SearchInput, FloatingLabelInput, Textarea, FormField, inputVariants }

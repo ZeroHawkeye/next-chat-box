@@ -7,28 +7,39 @@ export default {
   ],
   theme: {
     screens: {
-      // 自定义响应式断点
-      "xs": "480px",   // 超小屏 (大手机)
-      "sm": "640px",   // 小屏 (平板竖屏)
-      "md": "768px",   // 中屏 (平板横屏)
-      "lg": "1024px",  // 大屏 (小笔记本)
-      "xl": "1280px",  // 超大屏 (桌面)
-      "2xl": "1536px", // 超超大屏 (大桌面)
+      // Apple 设备断点
+      "xs": "480px",    // iPhone Plus/Max
+      "sm": "640px",    // iPad Mini 竖屏
+      "md": "768px",    // iPad 竖屏
+      "lg": "1024px",   // iPad 横屏
+      "xl": "1280px",   // MacBook Air
+      "2xl": "1536px",  // MacBook Pro/iMac
     },
     extend: {
-      // 圆角 - 2025 趋势：更大更柔和
+      // Apple 圆角系统 - 连续曲率
       borderRadius: {
-        lg: "var(--radius)",
-        md: "calc(var(--radius) - 2px)",
-        sm: "calc(var(--radius) - 4px)",
-        xl: "var(--radius-lg, 1rem)",
-        "2xl": "var(--radius-xl, 1.5rem)",
-        "3xl": "var(--radius-2xl, 2rem)",
+        "xs": "var(--radius-xs)",
+        "sm": "var(--radius-sm)",
+        "DEFAULT": "var(--radius)",
+        "md": "var(--radius-md)",
+        "lg": "var(--radius-lg)",
+        "xl": "var(--radius-xl)",
+        "2xl": "var(--radius-2xl)",
+        "3xl": "var(--radius-3xl)",
+        "full": "var(--radius-full)",
       },
-      // 颜色系统
+      // Apple 颜色系统
       colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
+        background: {
+          DEFAULT: "hsl(var(--background))",
+          secondary: "hsl(var(--background-secondary))",
+          tertiary: "hsl(var(--background-tertiary))",
+        },
+        foreground: {
+          DEFAULT: "hsl(var(--foreground))",
+          secondary: "hsl(var(--foreground-secondary))",
+          tertiary: "hsl(var(--foreground-tertiary))",
+        },
         card: {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
@@ -40,6 +51,7 @@ export default {
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
+          hover: "hsl(var(--primary-hover))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -65,192 +77,259 @@ export default {
           DEFAULT: "hsl(var(--warning))",
           foreground: "hsl(var(--warning-foreground))",
         },
-        border: "hsl(var(--border))",
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
+        },
+        border: {
+          DEFAULT: "hsl(var(--border))",
+          secondary: "hsl(var(--border-secondary))",
+        },
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
-        // 侧边栏颜色
+        // 侧边栏
         sidebar: {
           DEFAULT: "hsl(var(--sidebar))",
           foreground: "hsl(var(--sidebar-foreground))",
           border: "hsl(var(--sidebar-border))",
           accent: "hsl(var(--sidebar-accent))",
           "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
+          muted: "hsl(var(--sidebar-muted))",
         },
-        // 标题栏颜色
+        // 标题栏
         titlebar: {
           DEFAULT: "hsl(var(--titlebar))",
           foreground: "hsl(var(--titlebar-foreground))",
           border: "hsl(var(--titlebar-border))",
         },
+        // Apple 系统颜色
+        apple: {
+          blue: "#007AFF",
+          "blue-dark": "#0A84FF",
+          green: "#34C759",
+          "green-dark": "#30D158",
+          indigo: "#5856D6",
+          "indigo-dark": "#5E5CE6",
+          orange: "#FF9500",
+          "orange-dark": "#FF9F0A",
+          pink: "#FF2D55",
+          "pink-dark": "#FF375F",
+          purple: "#AF52DE",
+          "purple-dark": "#BF5AF2",
+          red: "#FF3B30",
+          "red-dark": "#FF453A",
+          teal: "#5AC8FA",
+          "teal-dark": "#64D2FF",
+          yellow: "#FFCC00",
+          "yellow-dark": "#FFD60A",
+          gray: {
+            1: "#8E8E93",
+            2: "#AEAEB2",
+            3: "#C7C7CC",
+            4: "#D1D1D6",
+            5: "#E5E5EA",
+            6: "#F2F2F7",
+          },
+          "gray-dark": {
+            1: "#8E8E93",
+            2: "#636366",
+            3: "#48484A",
+            4: "#3A3A3C",
+            5: "#2C2C2E",
+            6: "#1C1C1E",
+          },
+        },
       },
-      // 安全区域支持 (移动端)
+      // Apple 间距系统 - 4px 基础网格
       spacing: {
+        "0.5": "2px",
+        "1": "4px",
+        "1.5": "6px",
+        "2": "8px",
+        "2.5": "10px",
+        "3": "12px",
+        "3.5": "14px",
+        "4": "16px",
+        "5": "20px",
+        "6": "24px",
+        "7": "28px",
+        "8": "32px",
+        "9": "36px",
+        "10": "40px",
+        "11": "44px",
+        "12": "48px",
+        "14": "56px",
+        "16": "64px",
+        "20": "80px",
+        "24": "96px",
         "safe-top": "env(safe-area-inset-top)",
         "safe-bottom": "env(safe-area-inset-bottom)",
         "safe-left": "env(safe-area-inset-left)",
         "safe-right": "env(safe-area-inset-right)",
       },
-      // 字体
+      // Apple 字体系统
       fontFamily: {
-        sans: [
-          "Inter",
-          "SF Pro Display",
-          "-apple-system",
-          "BlinkMacSystemFont",
-          "Segoe UI",
-          "Roboto",
-          "Helvetica Neue",
-          "Arial",
-          "PingFang SC",
-          "Hiragino Sans GB",
-          "Microsoft YaHei",
-          "sans-serif"
-        ],
+        sans: ["var(--font-sans)"],
+        mono: ["var(--font-mono)"],
       },
-      // 阴影系统 - 2025 趋势：柔和多层次
+      // Apple 字体大小
+      fontSize: {
+        "caption-2": ["11px", { lineHeight: "1.27273", letterSpacing: "0.006em" }],
+        "caption-1": ["12px", { lineHeight: "1.33333", letterSpacing: "0" }],
+        "footnote": ["13px", { lineHeight: "1.38462", letterSpacing: "-0.006em" }],
+        "subheadline": ["15px", { lineHeight: "1.33333", letterSpacing: "-0.016em" }],
+        "callout": ["16px", { lineHeight: "1.3125", letterSpacing: "-0.02em" }],
+        "body": ["17px", { lineHeight: "1.47059", letterSpacing: "-0.022em" }],
+        "headline": ["17px", { lineHeight: "1.29412", letterSpacing: "-0.022em", fontWeight: "600" }],
+        "title-3": ["20px", { lineHeight: "1.2", letterSpacing: "0.012em", fontWeight: "600" }],
+        "title-2": ["22px", { lineHeight: "1.18182", letterSpacing: "0.016em", fontWeight: "700" }],
+        "title-1": ["28px", { lineHeight: "1.14286", letterSpacing: "0.007em", fontWeight: "700" }],
+        "large-title": ["34px", { lineHeight: "1.17647", letterSpacing: "0.011em", fontWeight: "700" }],
+      },
+      // Apple 阴影系统
       boxShadow: {
-        'soft-xs': '0 1px 2px 0 rgb(0 0 0 / 0.03)',
-        'soft-sm': '0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05)',
-        'soft': '0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05)',
-        'soft-md': '0 6px 10px -2px rgb(0 0 0 / 0.05), 0 4px 6px -3px rgb(0 0 0 / 0.05)',
-        'soft-lg': '0 10px 15px -3px rgb(0 0 0 / 0.05), 0 4px 6px -4px rgb(0 0 0 / 0.05)',
-        'soft-xl': '0 20px 25px -5px rgb(0 0 0 / 0.05), 0 8px 10px -6px rgb(0 0 0 / 0.05)',
-        'soft-2xl': '0 25px 50px -12px rgb(0 0 0 / 0.15)',
-        'glow-sm': '0 0 15px -3px hsl(var(--primary) / 0.3)',
-        'glow': '0 0 25px -5px hsl(var(--primary) / 0.4)',
-        'glow-lg': '0 0 40px -5px hsl(var(--primary) / 0.5)',
+        "apple-xs": "var(--shadow-xs)",
+        "apple-sm": "var(--shadow-sm)",
+        "apple": "var(--shadow)",
+        "apple-md": "var(--shadow-md)",
+        "apple-lg": "var(--shadow-lg)",
+        "apple-xl": "var(--shadow-xl)",
+        // 功能性阴影
+        "elevated": "0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04)",
+        "float": "0 8px 28px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.04)",
+        "modal": "0 16px 48px rgba(0, 0, 0, 0.16), 0 8px 16px rgba(0, 0, 0, 0.04)",
+        // 发光阴影
+        "glow-blue": "0 0 20px rgba(0, 122, 255, 0.4)",
+        "glow-green": "0 0 20px rgba(52, 199, 89, 0.4)",
+        "glow-red": "0 0 20px rgba(255, 59, 48, 0.4)",
       },
-      // 动画 - 2025 趋势：流畅自然
+      // Apple 动画系统
       animation: {
         // 基础动画
-        "fade-in": "fade-in 0.3s ease-out",
-        "fade-out": "fade-out 0.2s ease-in",
-        "slide-in-left": "slide-in-left 0.3s ease-out",
-        "slide-out-left": "slide-out-left 0.3s ease-in",
-        "slide-in-right": "slide-in-right 0.3s ease-out",
-        "slide-in-bottom": "slide-in-bottom 0.3s ease-out",
-        "slide-in-top": "slide-in-top 0.3s ease-out",
-        "scale-in": "scale-in 0.2s ease-out",
-        "scale-out": "scale-out 0.2s ease-in",
-        // 特殊动画
-        "float": "float 3s ease-in-out infinite",
-        "pulse-soft": "pulse-soft 2s ease-in-out infinite",
-        "shimmer": "shimmer 2s linear infinite",
-        "bounce-subtle": "bounce-subtle 2s ease-in-out infinite",
-        "spin-slow": "spin-slow 3s linear infinite",
-        "gradient-shift": "gradient-shift 5s ease infinite",
-        // 进入动画
-        "enter-fade": "enter-fade 0.3s ease-out",
-        "enter-scale": "enter-scale 0.3s ease-out",
-        "enter-slide-up": "enter-slide-up 0.3s ease-out",
-        "enter-slide-down": "enter-slide-down 0.3s ease-out",
+        "fade-in": "fade-in var(--duration-normal) var(--ease-out)",
+        "fade-out": "fade-out var(--duration-fast) var(--ease-in)",
+        "scale-in": "scale-in var(--duration-normal) var(--ease-spring)",
+        "scale-out": "scale-out var(--duration-fast) var(--ease-in)",
+        "slide-up": "slide-up var(--duration-normal) var(--ease-out)",
+        "slide-down": "slide-down var(--duration-normal) var(--ease-out)",
+        "slide-in-bottom": "slide-in-from-bottom var(--duration-slow) var(--ease-spring)",
+        "slide-out-bottom": "slide-out-to-bottom var(--duration-normal) var(--ease-in)",
+        // 持续动画
+        "spin": "spin 1s linear infinite",
+        "pulse": "pulse 2s var(--ease-in-out) infinite",
+        "bounce-in": "bounce-in 0.5s var(--ease-default)",
+        "shimmer": "shimmer 1.5s infinite",
+        // 打字指示
+        "typing": "typing-dot 1.4s infinite",
       },
       keyframes: {
-        // 淡入淡出
         "fade-in": {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
+          "from": { opacity: "0" },
+          "to": { opacity: "1" },
         },
         "fade-out": {
-          "0%": { opacity: "1" },
-          "100%": { opacity: "0" },
+          "from": { opacity: "1" },
+          "to": { opacity: "0" },
         },
-        // 滑动
-        "slide-in-left": {
-          "0%": { transform: "translateX(-100%)", opacity: "0" },
-          "100%": { transform: "translateX(0)", opacity: "1" },
-        },
-        "slide-out-left": {
-          "0%": { transform: "translateX(0)", opacity: "1" },
-          "100%": { transform: "translateX(-100%)", opacity: "0" },
-        },
-        "slide-in-right": {
-          "0%": { transform: "translateX(100%)", opacity: "0" },
-          "100%": { transform: "translateX(0)", opacity: "1" },
-        },
-        "slide-in-bottom": {
-          "0%": { transform: "translateY(20px)", opacity: "0" },
-          "100%": { transform: "translateY(0)", opacity: "1" },
-        },
-        "slide-in-top": {
-          "0%": { transform: "translateY(-20px)", opacity: "0" },
-          "100%": { transform: "translateY(0)", opacity: "1" },
-        },
-        // 缩放
         "scale-in": {
-          "0%": { transform: "scale(0.95)", opacity: "0" },
-          "100%": { transform: "scale(1)", opacity: "1" },
+          "from": { opacity: "0", transform: "scale(0.95)" },
+          "to": { opacity: "1", transform: "scale(1)" },
         },
         "scale-out": {
-          "0%": { transform: "scale(1)", opacity: "1" },
-          "100%": { transform: "scale(0.95)", opacity: "0" },
+          "from": { opacity: "1", transform: "scale(1)" },
+          "to": { opacity: "0", transform: "scale(0.95)" },
         },
-        // 浮动
-        "float": {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-10px)" },
+        "slide-up": {
+          "from": { opacity: "0", transform: "translateY(10px)" },
+          "to": { opacity: "1", transform: "translateY(0)" },
         },
-        // 柔和脉冲
-        "pulse-soft": {
+        "slide-down": {
+          "from": { opacity: "0", transform: "translateY(-10px)" },
+          "to": { opacity: "1", transform: "translateY(0)" },
+        },
+        "slide-in-from-bottom": {
+          "from": { opacity: "0", transform: "translateY(100%)" },
+          "to": { opacity: "1", transform: "translateY(0)" },
+        },
+        "slide-out-to-bottom": {
+          "from": { opacity: "1", transform: "translateY(0)" },
+          "to": { opacity: "0", transform: "translateY(100%)" },
+        },
+        "spin": {
+          "to": { transform: "rotate(360deg)" },
+        },
+        "pulse": {
           "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.7" },
+          "50%": { opacity: "0.5" },
         },
-        // 闪光
-        "shimmer": {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
-        },
-        // 微弹
-        "bounce-subtle": {
-          "0%, 100%": { transform: "translateY(0)" },
-          "50%": { transform: "translateY(-5px)" },
-        },
-        // 慢速旋转
-        "spin-slow": {
-          "0%": { transform: "rotate(0deg)" },
-          "100%": { transform: "rotate(360deg)" },
-        },
-        // 渐变移动
-        "gradient-shift": {
-          "0%, 100%": { backgroundPosition: "0% 50%" },
-          "50%": { backgroundPosition: "100% 50%" },
-        },
-        // 进入动画
-        "enter-fade": {
-          "0%": { opacity: "0" },
-          "100%": { opacity: "1" },
-        },
-        "enter-scale": {
-          "0%": { opacity: "0", transform: "scale(0.96)" },
+        "bounce-in": {
+          "0%": { opacity: "0", transform: "scale(0.3)" },
+          "50%": { transform: "scale(1.05)" },
+          "70%": { transform: "scale(0.9)" },
           "100%": { opacity: "1", transform: "scale(1)" },
         },
-        "enter-slide-up": {
-          "0%": { opacity: "0", transform: "translateY(8px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
+        "shimmer": {
+          "0%": { backgroundPosition: "200% 0" },
+          "100%": { backgroundPosition: "-200% 0" },
         },
-        "enter-slide-down": {
-          "0%": { opacity: "0", transform: "translateY(-8px)" },
-          "100%": { opacity: "1", transform: "translateY(0)" },
+        "typing-dot": {
+          "0%, 60%, 100%": { transform: "translateY(0)", opacity: "0.4" },
+          "30%": { transform: "translateY(-4px)", opacity: "1" },
         },
       },
-      // 过渡时间
+      // Apple 过渡时长
       transitionDuration: {
-        "250": "250ms",
-        "350": "350ms",
-        "400": "400ms",
+        "fast": "var(--duration-fast)",
+        "normal": "var(--duration-normal)",
+        "slow": "var(--duration-slow)",
       },
-      // 缓动函数
+      // Apple 缓动函数
       transitionTimingFunction: {
-        "smooth": "cubic-bezier(0.4, 0, 0.2, 1)",
-        "bounce": "cubic-bezier(0.68, -0.55, 0.265, 1.55)",
-        "spring": "cubic-bezier(0.175, 0.885, 0.32, 1.275)",
+        "apple": "var(--ease-default)",
+        "apple-in": "var(--ease-in)",
+        "apple-out": "var(--ease-out)",
+        "apple-in-out": "var(--ease-in-out)",
+        "spring": "var(--ease-spring)",
+        "bounce": "var(--ease-bounce)",
       },
-      // 背景图片 - 渐变
+      // 背景渐变
       backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic': 'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
-        'gradient-primary': 'linear-gradient(135deg, hsl(var(--gradient-start)), hsl(var(--gradient-end)))',
-        'gradient-subtle': 'linear-gradient(135deg, hsl(var(--gradient-start) / 0.1), hsl(var(--gradient-end) / 0.1))',
+        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
+        "gradient-conic": "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
+        "shimmer": "linear-gradient(90deg, transparent 0%, hsl(var(--foreground) / 0.05) 50%, transparent 100%)",
+      },
+      // 边框宽度 - Apple 喜欢细线
+      borderWidth: {
+        "DEFAULT": "1px",
+        "0": "0",
+        "0.5": "0.5px",
+        "2": "2px",
+        "4": "4px",
+      },
+      // 最小高度 - Apple 触摸目标
+      minHeight: {
+        "touch": "44px",  // Apple HIG 最小触摸目标
+        "button": "50px", // Apple 标准按钮高度
+      },
+      // 最小宽度
+      minWidth: {
+        "touch": "44px",
+      },
+      // 透明度
+      opacity: {
+        "15": "0.15",
+        "85": "0.85",
+      },
+      // z-index
+      zIndex: {
+        "dropdown": "1000",
+        "sticky": "1020",
+        "fixed": "1030",
+        "modal-backdrop": "1040",
+        "modal": "1050",
+        "popover": "1060",
+        "tooltip": "1070",
+        "toast": "1080",
       },
     },
   },

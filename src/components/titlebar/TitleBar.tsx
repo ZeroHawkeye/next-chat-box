@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from "react"
 import { getCurrentWindow, Window } from "@tauri-apps/api/window"
-import { Minus, X, Copy, Maximize2 } from "lucide-react"
+import { Minus, X, Square, Copy } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { isTauri, getOperatingSystem } from "@/lib/platform"
+import Logo from "@/components/ui/Logo"
 
 interface TitleBarProps {
   className?: string
-  title?: string
 }
 
 // 在模块级别检测环境
@@ -14,17 +14,17 @@ const IS_TAURI = isTauri()
 const IS_MAC = getOperatingSystem() === "macos"
 
 /**
- * 2025 现代化标题栏组件
+ * Apple Design System 标题栏组件
  * 
  * 设计特点:
  * - 毛玻璃背景效果
- * - 平滑的按钮动画
- * - 精细的悬浮效果
+ * - 精致的窗口控制按钮
+ * - 流畅的动画效果
  * - 跨平台适配
  */
-export function TitleBar({ className, title = "Next Chat Box" }: TitleBarProps) {
+export function TitleBar({ className }: TitleBarProps) {
   const [isMaximized, setIsMaximized] = useState(false)
-  const [isHovering, setIsHovering] = useState<string | null>(null)
+  const [hoveredButton, setHoveredButton] = useState<string | null>(null)
   const appWindowRef = useRef<Window | null>(null)
 
   useEffect(() => {
@@ -116,10 +116,10 @@ export function TitleBar({ className, title = "Next Chat Box" }: TitleBarProps) 
   return (
     <header
       className={cn(
-        "h-10 flex items-center select-none flex-shrink-0",
-        "bg-titlebar/80 backdrop-blur-xl",
-        "border-b border-titlebar-border/30",
-        "transition-colors duration-200",
+        "h-8 flex items-center select-none flex-shrink-0",
+        "bg-titlebar/80 backdrop-blur-2xl backdrop-saturate-150",
+        "border-b border-titlebar-border/40",
+        "transition-colors duration-normal ease-apple",
         className
       )}
       onMouseDown={(e) => {
@@ -131,79 +131,79 @@ export function TitleBar({ className, title = "Next Chat Box" }: TitleBarProps) 
         }
       }}
     >
-      {/* macOS: 按钮在左侧 */}
+      {/* macOS: 红绿灯按钮在左侧 (由系统渲染，留出空间) */}
       {IS_MAC && <div className="w-[70px] flex-shrink-0" />}
 
-      {/* 标题区域 */}
-      <div className="flex-1 flex items-center px-4 h-full">
-        {/* Logo */}
-        <div className="flex items-center gap-2">
-          <div className="w-5 h-5 rounded-md bg-gradient-primary flex items-center justify-center">
-            <span className="text-[10px] font-bold text-white">N</span>
-          </div>
-          <span className="text-xs font-medium text-muted-foreground">
-            {title}
-          </span>
+      {/* Logo - 左侧 */}
+      {!IS_MAC && (
+        <div className="flex items-center pl-2.5 pr-2 h-full">
+          <Logo size={15} />
         </div>
-      </div>
+      )}
 
-      {/* Windows/Linux: 按钮在右侧 */}
+      {/* 占位区域 */}
+      <div className="flex-1" />
+
+      {/* Windows/Linux: 窗口控制按钮在右侧 */}
       {!IS_MAC && (
         <div className="flex items-center flex-shrink-0 h-full">
-          <WindowButton
+          {/* 最小化 */}
+          <WindowControlButton
             onClick={handleMinimize}
-            isHovering={isHovering === "minimize"}
-            onHoverChange={(hovering) => setIsHovering(hovering ? "minimize" : null)}
+            isHovered={hoveredButton === "minimize"}
+            onHoverChange={(h) => setHoveredButton(h ? "minimize" : null)}
             aria-label="最小化"
           >
-            <Minus className="w-4 h-4" strokeWidth={1.5} />
-          </WindowButton>
+            <Minus className="w-3.5 h-3.5" strokeWidth={1.5} />
+          </WindowControlButton>
           
-          <WindowButton
+          {/* 最大化/还原 */}
+          <WindowControlButton
             onClick={toggleMaximize}
-            isHovering={isHovering === "maximize"}
-            onHoverChange={(hovering) => setIsHovering(hovering ? "maximize" : null)}
+            isHovered={hoveredButton === "maximize"}
+            onHoverChange={(h) => setHoveredButton(h ? "maximize" : null)}
             aria-label={isMaximized ? "还原" : "最大化"}
           >
             {isMaximized ? (
-              <Copy className="w-3.5 h-3.5 rotate-180" strokeWidth={1.5} />
+              <Copy className="w-[11px] h-[11px] rotate-180" strokeWidth={1.5} />
             ) : (
-              <Maximize2 className="w-3.5 h-3.5" strokeWidth={1.5} />
+              <Square className="w-2.5 h-2.5" strokeWidth={1.5} />
             )}
-          </WindowButton>
+          </WindowControlButton>
           
-          <WindowButton
+          {/* 关闭 */}
+          <WindowControlButton
             onClick={handleClose}
             variant="close"
-            isHovering={isHovering === "close"}
-            onHoverChange={(hovering) => setIsHovering(hovering ? "close" : null)}
+            isHovered={hoveredButton === "close"}
+            onHoverChange={(h) => setHoveredButton(h ? "close" : null)}
             aria-label="关闭"
           >
-            <X className="w-4 h-4" strokeWidth={1.5} />
-          </WindowButton>
+            <X className="w-3.5 h-3.5" strokeWidth={1.5} />
+          </WindowControlButton>
         </div>
       )}
     </header>
   )
 }
 
-interface WindowButtonProps {
+interface WindowControlButtonProps {
   onClick: () => void
   children: React.ReactNode
   "aria-label": string
   variant?: "default" | "close"
-  isHovering?: boolean
+  isHovered?: boolean
   onHoverChange?: (hovering: boolean) => void
 }
 
-function WindowButton({ 
+function WindowControlButton({ 
   onClick, 
   children, 
   "aria-label": ariaLabel,
   variant = "default",
-  isHovering,
+  isHovered,
   onHoverChange
-}: WindowButtonProps) {
+}: WindowControlButtonProps) {
   return (
     <button
       onClick={(e) => {
@@ -216,27 +216,27 @@ function WindowButton({
       onMouseEnter={() => onHoverChange?.(true)}
       onMouseLeave={() => onHoverChange?.(false)}
       className={cn(
-        "w-12 h-full flex items-center justify-center",
-        "transition-all duration-150",
-        "text-muted-foreground",
-        // 默认按钮样式
+        "w-11 h-full flex items-center justify-center",
+        "transition-all duration-fast ease-apple",
+        "text-muted-foreground/70",
+        // 默认按钮
         variant === "default" && [
-          "hover:bg-secondary/80 hover:text-foreground",
-          isHovering && "bg-secondary/80 text-foreground",
+          "hover:bg-foreground/6 hover:text-foreground",
+          isHovered && "bg-foreground/6 text-foreground",
         ],
-        // 关闭按钮样式
+        // 关闭按钮 - Apple 红色背景 + 白色图标
         variant === "close" && [
-          "hover:bg-red-500 hover:text-white",
-          isHovering && "bg-red-500 text-white",
+          "hover:bg-[#FF3B30] hover:text-white",
+          isHovered && "bg-[#FF3B30] text-white",
+          "[&>span]:hover:drop-shadow-sm",
         ],
-        // 按下效果
-        "active:opacity-70"
+        "active:opacity-80"
       )}
       aria-label={ariaLabel}
     >
       <span className={cn(
-        "transition-transform duration-150",
-        isHovering && "scale-110"
+        "transition-transform duration-fast ease-apple",
+        isHovered && "scale-105"
       )}>
         {children}
       </span>

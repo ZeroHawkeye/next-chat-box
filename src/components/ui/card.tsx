@@ -3,97 +3,99 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * 2025 现代化卡片组件
+ * Apple Design System 卡片组件
  * 
  * 设计特点:
- * - 多种变体：默认、玻璃态、渐变边框、Bento风格
- * - 悬浮提升效果
- * - 细腻的阴影层次
- * - 流畅的过渡动画
+ * - Apple 标准圆角和阴影
+ * - 分组列表样式 (Grouped List)
+ * - 内嵌列表样式 (Inset Grouped)
+ * - 精致的边框和分隔线
  */
 const cardVariants = cva(
   [
-    "rounded-2xl",
-    "transition-all duration-300 ease-out",
+    "rounded-xl",
+    "transition-all duration-normal ease-apple",
   ].join(" "),
   {
     variants: {
       variant: {
-        // 默认卡片
+        // 默认卡片 - Apple 标准
         default: [
           "bg-card text-card-foreground",
-          "border border-border/50",
-          "shadow-sm shadow-black/5",
+          "shadow-apple-sm",
         ].join(" "),
         
-        // 凸起卡片 - 更明显的阴影
+        // 带边框卡片
+        bordered: [
+          "bg-card text-card-foreground",
+          "border-0.5 border-border",
+        ].join(" "),
+        
+        // 凸起卡片
         elevated: [
           "bg-card text-card-foreground",
-          "shadow-lg shadow-black/10",
-          "border border-border/30",
+          "shadow-apple-md",
+        ].join(" "),
+        
+        // 浮动卡片 - 用于模态框等
+        floating: [
+          "bg-card text-card-foreground",
+          "shadow-apple-xl",
         ].join(" "),
         
         // 玻璃态卡片
         glass: [
-          "bg-background/60 backdrop-blur-xl",
-          "border border-white/20",
-          "shadow-lg shadow-black/5",
+          "bg-background/70 backdrop-blur-xl",
+          "border-0.5 border-border/50",
           "text-foreground",
         ].join(" "),
         
-        // 渐变边框卡片
-        gradient: [
-          "relative bg-card text-card-foreground",
-          "before:absolute before:inset-0 before:rounded-2xl before:p-[1px]",
-          "before:bg-gradient-to-br before:from-primary/50 before:to-primary/10",
-          "before:-z-10",
+        // 分组卡片 - Apple 设置页风格
+        grouped: [
+          "bg-card text-card-foreground",
+          "shadow-apple-xs",
+          "overflow-hidden",
+          "[&>*+*]:border-t [&>*+*]:border-border",
         ].join(" "),
         
-        // 渐变填充卡片
-        "gradient-fill": [
-          "bg-gradient-to-br from-primary/10 to-primary/5",
-          "border border-primary/20",
-          "text-foreground",
-        ].join(" "),
-        
-        // 轮廓卡片
-        outline: [
-          "bg-transparent",
-          "border-2 border-border",
-          "text-foreground",
+        // 内嵌分组 - 带左边距的分隔线
+        inset: [
+          "bg-card text-card-foreground",
+          "shadow-apple-xs",
+          "overflow-hidden",
         ].join(" "),
         
         // 交互式卡片
         interactive: [
           "bg-card text-card-foreground",
-          "border border-border/50",
-          "shadow-sm shadow-black/5",
-          "hover:shadow-xl hover:shadow-black/10",
-          "hover:-translate-y-1",
-          "hover:border-primary/30",
+          "shadow-apple-sm",
+          "hover:shadow-apple-md hover:-translate-y-0.5",
+          "active:scale-[0.99] active:shadow-apple-sm",
           "cursor-pointer",
         ].join(" "),
         
-        // Bento 风格卡片
-        bento: [
-          "bg-gradient-to-br from-card to-card/80",
-          "border border-border/30",
-          "shadow-lg shadow-black/5",
-          "hover:shadow-xl hover:shadow-primary/10",
-          "hover:border-primary/20",
+        // 选中状态卡片
+        selectable: [
+          "bg-card text-card-foreground",
+          "border-2 border-transparent",
+          "shadow-apple-sm",
+          "hover:border-primary/30",
+          "cursor-pointer",
+          "data-[selected=true]:border-primary data-[selected=true]:bg-primary/5",
         ].join(" "),
         
-        // 深色强调卡片
-        dark: [
-          "bg-foreground text-background",
-          "shadow-xl shadow-black/20",
+        // 纯净 - 无背景
+        plain: [
+          "bg-transparent",
         ].join(" "),
       },
       padding: {
         none: "",
+        xs: "p-3",
         sm: "p-4",
-        default: "p-6",
-        lg: "p-8",
+        default: "p-5",
+        lg: "p-6",
+        xl: "p-8",
       },
     },
     defaultVariants: {
@@ -125,23 +127,20 @@ const CardHeader = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={cn("flex flex-col space-y-1.5", className)}
+    className={cn("flex flex-col space-y-1", className)}
     {...props}
   />
 ))
 CardHeader.displayName = "CardHeader"
 
-// 卡片标题
+// 卡片标题 - Apple 风格
 const CardTitle = React.forwardRef<
   HTMLHeadingElement,
   React.HTMLAttributes<HTMLHeadingElement>
 >(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={cn(
-      "text-lg font-semibold leading-none tracking-tight",
-      className
-    )}
+    className={cn("text-headline", className)}
     {...props}
   />
 ))
@@ -154,13 +153,13 @@ const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-muted-foreground", className)}
+    className={cn("text-subheadline text-muted-foreground", className)}
     {...props}
   />
 ))
 CardDescription.displayName = "CardDescription"
 
-// 卡片内容区
+// 卡片内容
 const CardContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
@@ -182,7 +181,136 @@ const CardFooter = React.forwardRef<
 ))
 CardFooter.displayName = "CardFooter"
 
-// 特色卡片 - 用于突出显示
+// Apple 风格列表项
+interface ListItemProps extends React.HTMLAttributes<HTMLDivElement> {
+  leftIcon?: React.ReactNode
+  rightIcon?: React.ReactNode
+  rightText?: string
+  subtitle?: string
+  destructive?: boolean
+  chevron?: boolean
+}
+
+const ListItem = React.forwardRef<HTMLDivElement, ListItemProps>(
+  ({ 
+    className, 
+    children, 
+    leftIcon, 
+    rightIcon, 
+    rightText,
+    subtitle,
+    destructive,
+    chevron,
+    onClick,
+    ...props 
+  }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        "flex items-center gap-3 px-4 py-3 min-h-11",
+        "transition-colors duration-fast ease-apple",
+        onClick && "cursor-pointer active:bg-foreground/5",
+        className
+      )}
+      onClick={onClick}
+      {...props}
+    >
+      {leftIcon && (
+        <div className={cn(
+          "shrink-0",
+          destructive ? "text-destructive" : "text-primary"
+        )}>
+          {leftIcon}
+        </div>
+      )}
+      <div className="flex-1 min-w-0">
+        <div className={cn(
+          "text-body",
+          destructive && "text-destructive"
+        )}>
+          {children}
+        </div>
+        {subtitle && (
+          <div className="text-footnote text-muted-foreground mt-0.5">
+            {subtitle}
+          </div>
+        )}
+      </div>
+      {rightText && (
+        <span className="text-body text-muted-foreground shrink-0">
+          {rightText}
+        </span>
+      )}
+      {rightIcon && (
+        <div className="shrink-0 text-muted-foreground">
+          {rightIcon}
+        </div>
+      )}
+      {chevron && (
+        <ChevronRight className="shrink-0 text-muted-foreground/50" />
+      )}
+    </div>
+  )
+)
+ListItem.displayName = "ListItem"
+
+// 内嵌列表项 - 分隔线从左侧图标后开始
+const InsetListItem = React.forwardRef<HTMLDivElement, ListItemProps>(
+  ({ className, ...props }, ref) => (
+    <div className="relative">
+      <ListItem 
+        ref={ref} 
+        className={cn(
+          "before:absolute before:bottom-0 before:left-[52px] before:right-0 before:h-[0.5px] before:bg-border",
+          "last:before:hidden",
+          className
+        )} 
+        {...props} 
+      />
+    </div>
+  )
+)
+InsetListItem.displayName = "InsetListItem"
+
+// 分组头部
+interface GroupHeaderProps extends React.HTMLAttributes<HTMLDivElement> {
+  title: string
+  action?: React.ReactNode
+}
+
+const GroupHeader = React.forwardRef<HTMLDivElement, GroupHeaderProps>(
+  ({ className, title, action, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        "flex items-center justify-between px-4 py-2",
+        className
+      )}
+      {...props}
+    >
+      <span className="text-footnote text-muted-foreground uppercase tracking-wide">
+        {title}
+      </span>
+      {action}
+    </div>
+  )
+)
+GroupHeader.displayName = "GroupHeader"
+
+// 分组底部说明
+const GroupFooter = React.forwardRef<
+  HTMLDivElement,
+  React.HTMLAttributes<HTMLDivElement>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    className={cn("px-4 py-2 text-footnote text-muted-foreground", className)}
+    {...props}
+  />
+))
+GroupFooter.displayName = "GroupFooter"
+
+// 特色卡片
 interface FeatureCardProps extends React.HTMLAttributes<HTMLDivElement> {
   icon?: React.ReactNode
   title: string
@@ -198,14 +326,12 @@ const FeatureCard = React.forwardRef<HTMLDivElement, FeatureCardProps>(
       {...props}
     >
       {icon && (
-        <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-300">
+        <div className="mb-4 inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary">
           {icon}
         </div>
       )}
       <CardHeader className="p-0">
-        <CardTitle className="group-hover:text-primary transition-colors">
-          {title}
-        </CardTitle>
+        <CardTitle>{title}</CardTitle>
         {description && <CardDescription>{description}</CardDescription>}
       </CardHeader>
       {children && <CardContent className="mt-4">{children}</CardContent>}
@@ -227,18 +353,16 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
   ({ className, label, value, change, trend, icon, ...props }, ref) => (
     <Card ref={ref} variant="elevated" className={cn("", className)} {...props}>
       <div className="flex items-start justify-between">
-        <div className="space-y-2">
-          <p className="text-sm text-muted-foreground">{label}</p>
-          <p className="text-3xl font-bold tracking-tight">{value}</p>
+        <div className="space-y-1">
+          <p className="text-footnote text-muted-foreground">{label}</p>
+          <p className="text-title-1">{value}</p>
           {change && (
-            <p
-              className={cn(
-                "text-sm font-medium",
-                trend === "up" && "text-green-500",
-                trend === "down" && "text-red-500",
-                trend === "neutral" && "text-muted-foreground"
-              )}
-            >
+            <p className={cn(
+              "text-footnote font-medium",
+              trend === "up" && "text-success",
+              trend === "down" && "text-destructive",
+              trend === "neutral" && "text-muted-foreground"
+            )}>
               {trend === "up" && "↑ "}
               {trend === "down" && "↓ "}
               {change}
@@ -246,7 +370,7 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
           )}
         </div>
         {icon && (
-          <div className="p-3 rounded-xl bg-primary/10 text-primary">
+          <div className="p-2.5 rounded-xl bg-primary/10 text-primary">
             {icon}
           </div>
         )}
@@ -256,6 +380,28 @@ const StatCard = React.forwardRef<HTMLDivElement, StatCardProps>(
 )
 StatCard.displayName = "StatCard"
 
+// Chevron 图标
+function ChevronRight({ className }: { className?: string }) {
+  return (
+    <svg 
+      width="7" 
+      height="12" 
+      viewBox="0 0 7 12" 
+      fill="none" 
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+    >
+      <path
+        d="M1 1L6 6L1 11"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    </svg>
+  )
+}
+
 export {
   Card,
   CardHeader,
@@ -263,6 +409,10 @@ export {
   CardDescription,
   CardContent,
   CardFooter,
+  ListItem,
+  InsetListItem,
+  GroupHeader,
+  GroupFooter,
   FeatureCard,
   StatCard,
   cardVariants,

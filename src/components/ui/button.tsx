@@ -4,132 +4,123 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { cn } from "@/lib/utils"
 
 /**
- * 2025 现代化按钮组件
+ * Apple Design System 按钮组件
  * 
  * 设计特点:
- * - 更大的圆角 (rounded-xl)
- * - 丝滑的过渡动画
- * - 渐变变体
- * - 玻璃态变体
- * - 悬浮提升效果
- * - 精细的阴影层次
+ * - Apple HIG 标准尺寸 (44px 最小触摸目标)
+ * - SF Pro 字体和精确的字重
+ * - 连续曲率圆角 (continuous corners)
+ * - 精致的按压反馈动画
+ * - 系统色彩规范
  */
 const buttonVariants = cva(
   [
     "inline-flex items-center justify-center gap-2",
-    "whitespace-nowrap text-sm font-medium",
-    "rounded-xl",
-    "ring-offset-background",
-    "transition-all duration-200 ease-out",
-    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50 focus-visible:ring-offset-2",
-    "disabled:pointer-events-none disabled:opacity-50",
-    "active:scale-[0.98]",
+    "whitespace-nowrap font-semibold",
+    "select-none",
+    "transition-all duration-fast ease-apple",
+    "focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring/30",
+    "disabled:pointer-events-none disabled:opacity-40",
+    "active:scale-[0.97] active:opacity-90",
   ].join(" "),
   {
     variants: {
       variant: {
-        // 默认 - 主色调填充
+        // 主要按钮 - Apple 蓝填充
         default: [
           "bg-primary text-primary-foreground",
-          "shadow-md shadow-primary/20",
-          "hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30",
-          "hover:-translate-y-0.5",
+          "hover:brightness-110",
+          "shadow-apple-sm",
         ].join(" "),
         
-        // 渐变 - 2025趋势
-        gradient: [
-          "bg-gradient-primary text-white",
-          "shadow-lg shadow-primary/25",
-          "hover:shadow-xl hover:shadow-primary/35",
-          "hover:-translate-y-0.5",
-          "relative overflow-hidden",
-          // 光泽效果由 CSS 类处理
-        ].join(" "),
-        
-        // 次要 - 柔和背景
+        // 次要按钮 - 柔和背景
         secondary: [
+          "bg-primary/12 text-primary",
+          "hover:bg-primary/18",
+        ].join(" "),
+        
+        // 三级按钮 - 纯文字
+        tertiary: [
+          "bg-transparent text-primary",
+          "hover:bg-primary/8",
+        ].join(" "),
+        
+        // 灰色按钮 - Apple 灰色填充
+        gray: [
           "bg-secondary text-secondary-foreground",
           "hover:bg-secondary/80",
-          "border border-border/50",
         ].join(" "),
         
-        // 轮廓 - 边框样式
+        // 轮廓按钮
         outline: [
-          "border-2 border-border bg-transparent",
-          "hover:bg-accent hover:text-accent-foreground",
-          "hover:border-primary/50",
+          "border border-border bg-transparent text-foreground",
+          "hover:bg-foreground/4",
         ].join(" "),
         
-        // 轮廓渐变 - 渐变边框
-        "outline-gradient": [
-          "relative bg-background text-foreground",
-          "before:absolute before:inset-0 before:rounded-xl before:p-[2px]",
-          "before:bg-gradient-primary before:-z-10",
-          "after:absolute after:inset-[2px] after:rounded-[10px] after:bg-background after:-z-10",
-          "hover:text-primary",
-        ].join(" "),
-        
-        // 玻璃态 - 毛玻璃效果
-        glass: [
-          "bg-background/50 backdrop-blur-md",
-          "border border-white/20",
-          "text-foreground",
-          "shadow-lg shadow-black/5",
-          "hover:bg-background/70 hover:border-white/30",
-        ].join(" "),
-        
-        // 幽灵 - 无背景
+        // 幽灵按钮 - 无背景
         ghost: [
-          "hover:bg-accent hover:text-accent-foreground",
-          "text-muted-foreground hover:text-foreground",
+          "text-foreground",
+          "hover:bg-foreground/6",
         ].join(" "),
         
         // 链接样式
         link: [
-          "text-primary underline-offset-4",
-          "hover:underline",
-          "p-0 h-auto",
+          "text-primary",
+          "hover:underline underline-offset-2",
+          "p-0 h-auto font-normal",
         ].join(" "),
         
-        // 危险 - 删除等操作
+        // 危险按钮 - Apple 红
         destructive: [
+          "bg-destructive/12 text-destructive",
+          "hover:bg-destructive/18",
+        ].join(" "),
+        
+        // 危险按钮填充
+        "destructive-fill": [
           "bg-destructive text-destructive-foreground",
-          "shadow-md shadow-destructive/20",
-          "hover:bg-destructive/90 hover:shadow-lg hover:shadow-destructive/30",
-          "hover:-translate-y-0.5",
+          "hover:brightness-110",
         ].join(" "),
         
-        // 成功
+        // 成功按钮 - Apple 绿
         success: [
+          "bg-success/12 text-success",
+          "hover:bg-success/18",
+        ].join(" "),
+        
+        // 成功按钮填充
+        "success-fill": [
           "bg-success text-success-foreground",
-          "shadow-md shadow-success/20",
-          "hover:bg-success/90 hover:shadow-lg hover:shadow-success/30",
-          "hover:-translate-y-0.5",
+          "hover:brightness-110",
         ].join(" "),
         
-        // 柔和主色
-        "soft-primary": [
-          "bg-primary/10 text-primary",
-          "hover:bg-primary/20",
-          "border border-primary/20",
+        // 玻璃态按钮
+        glass: [
+          "bg-background/60 backdrop-blur-xl",
+          "border-0.5 border-border/50",
+          "text-foreground",
+          "hover:bg-background/80",
+          "shadow-apple-sm",
         ].join(" "),
         
-        // 柔和危险
-        "soft-destructive": [
-          "bg-destructive/10 text-destructive",
-          "hover:bg-destructive/20",
-          "border border-destructive/20",
+        // 深色按钮
+        dark: [
+          "bg-foreground text-background",
+          "hover:opacity-90",
         ].join(" "),
       },
       size: {
-        xs: "h-7 px-2.5 text-xs rounded-lg",
-        sm: "h-9 px-3.5 text-sm",
-        default: "h-11 px-5",
-        lg: "h-12 px-8 text-base",
-        xl: "h-14 px-10 text-lg rounded-2xl",
-        icon: "h-10 w-10",
+        // Apple 标准尺寸
+        xs: "h-7 px-2.5 text-caption-1 rounded-md gap-1",
+        sm: "h-8 px-3 text-footnote rounded-lg gap-1.5",
+        default: "h-11 px-5 text-body rounded-xl",
+        lg: "h-[50px] px-6 text-body rounded-xl",
+        xl: "h-14 px-8 text-body rounded-2xl",
+        // 图标按钮
+        icon: "h-11 w-11 rounded-xl",
         "icon-sm": "h-8 w-8 rounded-lg",
-        "icon-lg": "h-12 w-12",
+        "icon-lg": "h-12 w-12 rounded-xl",
+        "icon-xl": "h-14 w-14 rounded-2xl",
       },
     },
     defaultVariants: {
@@ -163,15 +154,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   }, ref) => {
     const Comp = asChild ? Slot : "button"
     
-    // 渐变按钮添加光泽效果类
-    const isGradient = variant === "gradient"
-    
     return (
       <Comp
         className={cn(
           buttonVariants({ variant, size, className }),
-          isGradient && "btn-shine",
-          loading && "relative text-transparent"
+          loading && "relative text-transparent pointer-events-none"
         )}
         ref={ref}
         disabled={disabled || loading}
@@ -179,44 +166,54 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {loading && (
           <div className="absolute inset-0 flex items-center justify-center">
-            <LoadingSpinner className="w-4 h-4 text-current opacity-70" />
+            <LoadingSpinner />
           </div>
         )}
-        {leftIcon && !loading && <span className="shrink-0">{leftIcon}</span>}
+        {leftIcon && !loading && <span className="shrink-0 -ml-0.5">{leftIcon}</span>}
         {children}
-        {rightIcon && !loading && <span className="shrink-0">{rightIcon}</span>}
+        {rightIcon && !loading && <span className="shrink-0 -mr-0.5">{rightIcon}</span>}
       </Comp>
     )
   }
 )
 Button.displayName = "Button"
 
-// 加载动画组件
-function LoadingSpinner({ className }: { className?: string }) {
+// Apple 风格加载动画
+function LoadingSpinner() {
   return (
-    <svg 
-      className={cn("animate-spin", className)} 
-      viewBox="0 0 24 24" 
-      fill="none"
-    >
-      <circle 
-        className="opacity-25" 
-        cx="12" 
-        cy="12" 
-        r="10" 
-        stroke="currentColor" 
-        strokeWidth="4"
-      />
-      <path 
-        className="opacity-75" 
-        fill="currentColor" 
-        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-      />
-    </svg>
+    <div className="spinner-apple">
+      <style>{`
+        .spinner-apple {
+          width: 20px;
+          height: 20px;
+          position: relative;
+        }
+        .spinner-apple::before {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          border: 2px solid currentColor;
+          opacity: 0.2;
+        }
+        .spinner-apple::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          border-radius: 50%;
+          border: 2px solid transparent;
+          border-top-color: currentColor;
+          animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin {
+          to { transform: rotate(360deg); }
+        }
+      `}</style>
+    </div>
   )
 }
 
-// 图标按钮快捷组件
+// 图标按钮
 export interface IconButtonProps extends Omit<ButtonProps, "leftIcon" | "rightIcon"> {
   icon: React.ReactNode
   "aria-label": string
@@ -239,7 +236,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
 )
 IconButton.displayName = "IconButton"
 
-// 按钮组组件
+// 按钮组
 interface ButtonGroupProps {
   children: React.ReactNode
   className?: string
@@ -255,7 +252,8 @@ function ButtonGroup({ children, className, attached = false }: ButtonGroupProps
           "[&>button]:rounded-none",
           "[&>button:first-child]:rounded-l-xl",
           "[&>button:last-child]:rounded-r-xl",
-          "[&>button:not(:first-child)]:-ml-px",
+          "[&>button:not(:first-child)]:-ml-[0.5px]",
+          "[&>button:not(:first-child):not(:last-child)]:border-x-0",
         ].join(" ") : "gap-2",
         className
       )}
@@ -265,4 +263,48 @@ function ButtonGroup({ children, className, attached = false }: ButtonGroupProps
   )
 }
 
-export { Button, IconButton, ButtonGroup, buttonVariants }
+// Apple 分段控件
+interface SegmentedControlProps {
+  options: Array<{ value: string; label: string; icon?: React.ReactNode }>
+  value: string
+  onChange: (value: string) => void
+  className?: string
+  size?: "sm" | "default"
+}
+
+function SegmentedControl({ 
+  options, 
+  value, 
+  onChange, 
+  className,
+  size = "default" 
+}: SegmentedControlProps) {
+  return (
+    <div 
+      className={cn(
+        "inline-flex p-0.5 rounded-lg bg-secondary",
+        className
+      )}
+    >
+      {options.map((option) => (
+        <button
+          key={option.value}
+          type="button"
+          onClick={() => onChange(option.value)}
+          className={cn(
+            "flex items-center justify-center gap-1.5 font-medium transition-all duration-fast ease-apple",
+            size === "sm" ? "px-3 py-1 text-footnote rounded-md" : "px-4 py-1.5 text-subheadline rounded-lg",
+            value === option.value
+              ? "bg-background text-foreground shadow-apple-sm"
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          {option.icon}
+          {option.label}
+        </button>
+      ))}
+    </div>
+  )
+}
+
+export { Button, IconButton, ButtonGroup, SegmentedControl, buttonVariants }
