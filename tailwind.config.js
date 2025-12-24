@@ -6,6 +6,11 @@ export default {
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
   theme: {
+    fontSize: {
+      // 根字体大小基准，1rem = 16px (100% 缩放)
+      // 此值由 useThemeStore 的 applyZoom 动态设置
+      DEFAULT: "16px",
+    },
     screens: {
       // Apple 设备断点
       "xs": "480px",    // iPhone Plus/Max
@@ -16,6 +21,30 @@ export default {
       "2xl": "1536px",  // MacBook Pro/iMac
     },
     extend: {
+      // 间距系统 - 基于 rem 的间距（响应缩放）
+      spacing: {
+        "0": "0rem",
+        "0.5": "0.125rem",
+        "1": "0.25rem",
+        "1.5": "0.375rem",
+        "2": "0.5rem",
+        "2.5": "0.625rem",
+        "3": "0.75rem",
+        "3.5": "0.875rem",
+        "4": "1rem",
+        "5": "1.25rem",
+        "6": "1.5rem",
+        "7": "1.75rem",
+        "8": "2rem",
+        "9": "2.25rem",
+        "10": "2.5rem",
+        "11": "2.75rem",
+        "12": "3rem",
+        "14": "3.5rem",
+        "16": "4rem",
+        "20": "5rem",
+        "24": "6rem",
+      },
       // Apple 圆角系统 - 连续曲率
       borderRadius: {
         "xs": "var(--radius-xs)",
@@ -172,19 +201,19 @@ export default {
         sans: ["var(--font-sans)"],
         mono: ["var(--font-mono)"],
       },
-      // Apple 字体大小
+      // Zed + Apple 混合字体大小
       fontSize: {
-        "caption-2": ["11px", { lineHeight: "1.27273", letterSpacing: "0.006em" }],
-        "caption-1": ["12px", { lineHeight: "1.33333", letterSpacing: "0" }],
-        "footnote": ["13px", { lineHeight: "1.38462", letterSpacing: "-0.006em" }],
-        "subheadline": ["15px", { lineHeight: "1.33333", letterSpacing: "-0.016em" }],
-        "callout": ["16px", { lineHeight: "1.3125", letterSpacing: "-0.02em" }],
-        "body": ["17px", { lineHeight: "1.47059", letterSpacing: "-0.022em" }],
-        "headline": ["17px", { lineHeight: "1.29412", letterSpacing: "-0.022em", fontWeight: "600" }],
-        "title-3": ["20px", { lineHeight: "1.2", letterSpacing: "0.012em", fontWeight: "600" }],
-        "title-2": ["22px", { lineHeight: "1.18182", letterSpacing: "0.016em", fontWeight: "700" }],
-        "title-1": ["28px", { lineHeight: "1.14286", letterSpacing: "0.007em", fontWeight: "700" }],
-        "large-title": ["34px", { lineHeight: "1.17647", letterSpacing: "0.011em", fontWeight: "700" }],
+        "caption-2": ["11px", { lineHeight: "1.3", letterSpacing: "0.004em" }],
+        "caption-1": ["12px", { lineHeight: "1.35", letterSpacing: "0" }],
+        "footnote": ["13px", { lineHeight: "1.4", letterSpacing: "-0.004em" }],
+        "subheadline": ["14px", { lineHeight: "1.4", letterSpacing: "-0.008em" }],
+        "callout": ["15px", { lineHeight: "1.45", letterSpacing: "-0.012em" }],
+        "body": ["16px", { lineHeight: "1.5", letterSpacing: "-0.012em" }],
+        "headline": ["17px", { lineHeight: "1.35", letterSpacing: "-0.016em", fontWeight: "600" }],
+        "title-3": ["20px", { lineHeight: "1.3", letterSpacing: "-0.008em", fontWeight: "600" }],
+        "title-2": ["22px", { lineHeight: "1.25", letterSpacing: "-0.008em", fontWeight: "600" }],
+        "title-1": ["28px", { lineHeight: "1.15", letterSpacing: "-0.01em", fontWeight: "700" }],
+        "large-title": ["34px", { lineHeight: "1.15", letterSpacing: "-0.008em", fontWeight: "700" }],
       },
       // Apple 阴影系统
       boxShadow: {

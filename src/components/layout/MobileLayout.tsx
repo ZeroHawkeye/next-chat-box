@@ -38,10 +38,10 @@ export function MobileLayout({ children }: MobileLayoutProps) {
         />
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden pb-14">
-        {children}
-      </main>
+       {/* Main Content */}
+       <main className="flex-1 flex flex-col overflow-auto pb-14">
+         {children}
+       </main>
 
       {/* Bottom Navigation */}
       <MobileNav />

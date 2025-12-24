@@ -130,16 +130,32 @@ function resolveTheme(mode: ThemeMode): "light" | "dark" {
 }
 
 /**
- * 应用缩放比例到 DOM
+ * 应用缩放比例到 DOM（类似浏览器的缩放效果）
  * @param zoom 缩放百分比 (50-250)
+ * 
+ * 使用 CSS zoom 属性实现整体缩放，保持滚动正常工作
+ * zoom 属性会影响布局尺寸，因此滚动容器可以正确计算高度
  */
 function applyZoom(zoom: number) {
   if (typeof document === "undefined") return
   
   // 限制范围
   const clampedZoom = Math.min(Math.max(zoom, ZOOM_MIN), ZOOM_MAX)
+  const scaleValue = clampedZoom / 100
+  
+  // 清除之前的 transform 方案（如果有）
   const root = document.documentElement
-  root.style.fontSize = `${(clampedZoom / 100) * 16}px`
+  root.style.transform = ''
+  root.style.transformOrigin = ''
+  root.style.width = ''
+  
+  // 使用 zoom 属性实现缩放
+  // zoom 会改变布局尺寸，保持滚动正常工作
+  document.body.style.zoom = String(scaleValue)
+  
+  // 调整 html 高度以适应缩放后的 body
+  // 这确保垂直滚动在放大时正常工作
+  root.style.height = `${100 / scaleValue}%`
 }
 
 /**

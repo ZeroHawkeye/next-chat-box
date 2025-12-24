@@ -44,7 +44,7 @@ export function WebLayout({ children }: WebLayoutProps) {
         </aside>
 
         {/* Main Content */}
-        <main className="flex-1 flex flex-col overflow-hidden pb-14">
+        <main className="flex-1 flex flex-col overflow-auto pb-14">
           {children}
         </main>
 
@@ -54,18 +54,18 @@ export function WebLayout({ children }: WebLayoutProps) {
     )
   }
 
-  // 桌面端使用侧边栏布局
-  return (
-    <div className="flex h-screen bg-background">
-      {/* Sidebar - 始终显示 */}
-      <aside className="w-64 border-r border-border">
-        <Sidebar />
-      </aside>
+   // 桌面端使用侧边栏布局
+   return (
+     <div className="flex h-screen bg-background">
+       {/* Sidebar - 始终显示 */}
+       <aside className="w-64 border-r border-border">
+         <Sidebar />
+       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 flex flex-col overflow-hidden">
-        {children}
-      </main>
-    </div>
-  )
+       {/* Main Content */}
+       <main className="flex-1 flex flex-col overflow-auto">
+         {children}
+       </main>
+     </div>
+   )
 }

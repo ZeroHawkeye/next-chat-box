@@ -34,7 +34,7 @@ export default function SettingsPage() {
   ]
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex flex-col h-full min-h-0 bg-background">
       {/* Header */}
       <header className="flex-shrink-0 h-10 border-b border-border/50 flex items-center gap-2 px-3">
         {isMobileView && (
@@ -50,8 +50,8 @@ export default function SettingsPage() {
         <span className="text-[13px] font-medium">设置</span>
       </header>
 
-      {/* Content */}
-      <div className="flex-1 overflow-y-auto scrollbar-apple">
+      {/* Content - 滚动容器 */}
+      <div className="flex-1 min-h-0 overflow-y-auto scrollbar-apple">
         <div className="max-w-md mx-auto px-4 py-4 space-y-6">
           
           {/* 外观 */}

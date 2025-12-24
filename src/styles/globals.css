@@ -66,15 +66,15 @@
     --input: 0 0% 90%;
     --ring: 211 100% 50%;
     
-    /* Apple 圆角系统 - 连续曲率 */
-    --radius-xs: 4px;
-    --radius-sm: 6px;
-    --radius: 8px;
-    --radius-md: 10px;
-    --radius-lg: 12px;
-    --radius-xl: 16px;
-    --radius-2xl: 20px;
-    --radius-3xl: 24px;
+    /* Zed + Apple 圆角系统 - 更紧凑的圆角（基于 1rem = 16px） */
+    --radius-xs: 0.1875rem;
+    --radius-sm: 0.25rem;
+    --radius: 0.375rem;
+    --radius-md: 0.5rem;
+    --radius-lg: 0.625rem;
+    --radius-xl: 0.875rem;
+    --radius-2xl: 1.125rem;
+    --radius-3xl: 1.375rem;
     --radius-full: 9999px;
     
     /* 侧边栏 */
@@ -90,13 +90,13 @@
     --titlebar-foreground: 0 0% 0%;
     --titlebar-border: 0 0% 90%;
     
-    /* Apple 阴影系统 */
-    --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow: 0 2px 8px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1), 0 2px 4px rgba(0, 0, 0, 0.04);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12), 0 4px 8px rgba(0, 0, 0, 0.04);
-    --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.16), 0 8px 16px rgba(0, 0, 0, 0.04);
+    /* Zed + Apple 阴影系统 - 更轻的阴影（基于 1rem = 16px） */
+    --shadow-xs: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.03);
+    --shadow-sm: 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.05);
+    --shadow: 0 0.125rem 0.375rem rgba(0, 0, 0, 0.07), 0 0.0625rem 0.125rem rgba(0, 0, 0, 0.04);
+    --shadow-md: 0 0.25rem 0.625rem rgba(0, 0, 0, 0.08), 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+    --shadow-lg: 0 0.375rem 1rem rgba(0, 0, 0, 0.1), 0 0.1875rem 0.375rem rgba(0, 0, 0, 0.05);
+    --shadow-xl: 0 0.75rem 2rem rgba(0, 0, 0, 0.12), 0 0.375rem 0.75rem rgba(0, 0, 0, 0.06);
     
     /* 玻璃态 */
     --glass-bg: rgba(255, 255, 255, 0.72);
@@ -294,14 +294,22 @@
     font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
     overscroll-behavior: none;
     scroll-behavior: smooth;
+    /* 缩放相关 - 高度由 JS 动态设置 */
+    height: 100%;
+    min-height: 100vh;
+    overflow-x: hidden;
+    overflow-y: auto;
   }
 
   body {
     @apply bg-background text-foreground;
     -webkit-tap-highlight-color: transparent;
     text-size-adjust: 100%;
-    line-height: 1.47059;
-    letter-spacing: -0.022em;
+    line-height: 1.5;
+    letter-spacing: -0.012em;
+    font-size: 16px;
+    /* 确保 body 至少填满视口 */
+    min-height: 100%;
     transition: background-color var(--duration-normal) var(--ease-default),
                 color var(--duration-normal) var(--ease-default);
   }
@@ -318,75 +326,77 @@
   .safe-area-left { padding-left: env(safe-area-inset-left); }
   .safe-area-right { padding-right: env(safe-area-inset-right); }
 
-  /* Apple 排版系统 */
+  /* Zed + Apple 混合排版系统 */
+  /* 基于 Zed 的 16px UI 字体基准，优化可读性 */
+
   h1, .text-title-1 {
     font-size: 28px;
     font-weight: 700;
-    line-height: 1.14286;
-    letter-spacing: 0.007em;
+    line-height: 1.15;
+    letter-spacing: -0.01em;
   }
 
   h2, .text-title-2 {
     font-size: 22px;
-    font-weight: 700;
-    line-height: 1.18182;
-    letter-spacing: 0.016em;
+    font-weight: 600;
+    line-height: 1.25;
+    letter-spacing: -0.008em;
   }
 
   h3, .text-title-3 {
     font-size: 20px;
     font-weight: 600;
-    line-height: 1.2;
-    letter-spacing: 0.012em;
+    line-height: 1.3;
+    letter-spacing: -0.008em;
   }
 
   .text-headline {
     font-size: 17px;
     font-weight: 600;
-    line-height: 1.29412;
-    letter-spacing: -0.022em;
+    line-height: 1.35;
+    letter-spacing: -0.016em;
   }
 
   .text-body {
-    font-size: 17px;
+    font-size: 16px;
     font-weight: 400;
-    line-height: 1.47059;
-    letter-spacing: -0.022em;
+    line-height: 1.5;
+    letter-spacing: -0.012em;
   }
 
   .text-callout {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 400;
-    line-height: 1.3125;
-    letter-spacing: -0.02em;
+    line-height: 1.45;
+    letter-spacing: -0.012em;
   }
 
   .text-subheadline {
-    font-size: 15px;
+    font-size: 14px;
     font-weight: 400;
-    line-height: 1.33333;
-    letter-spacing: -0.016em;
+    line-height: 1.4;
+    letter-spacing: -0.008em;
   }
 
   .text-footnote {
     font-size: 13px;
     font-weight: 400;
-    line-height: 1.38462;
-    letter-spacing: -0.006em;
+    line-height: 1.4;
+    letter-spacing: -0.004em;
   }
 
   .text-caption-1 {
     font-size: 12px;
     font-weight: 400;
-    line-height: 1.33333;
+    line-height: 1.35;
     letter-spacing: 0;
   }
 
   .text-caption-2 {
     font-size: 11px;
     font-weight: 400;
-    line-height: 1.27273;
-    letter-spacing: 0.006em;
+    line-height: 1.3;
+    letter-spacing: 0.004em;
   }
 }
 
@@ -412,8 +422,8 @@
   }
 
   .scrollbar-apple::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 0.5rem;
+    height: 0.5rem;
   }
 
   .scrollbar-apple::-webkit-scrollbar-track {
@@ -445,21 +455,23 @@
     display: none;
   }
 
-  /* ===== 侧边栏 - Apple 风格 ===== */
+  /* ===== 侧边栏 - Zed + Apple 风格 ===== */
   .sidebar {
     background-color: hsl(var(--sidebar));
     color: hsl(var(--sidebar-foreground));
   }
 
   .sidebar-item {
-    @apply relative flex items-center gap-3 px-3 py-2 rounded-lg cursor-pointer;
-    @apply text-[15px] font-normal;
+    @apply relative flex items-center gap-2.5 px-3 py-2 rounded-md cursor-pointer;
+    @apply text-[0.875rem] font-normal;
     color: hsl(var(--sidebar-foreground));
     transition: all var(--duration-fast) var(--ease-default);
+    letter-spacing: -0.008em;
+    min-height: 2.25rem;
   }
 
   .sidebar-item:hover {
-    background: hsl(var(--foreground) / 0.04);
+    background: hsl(var(--foreground) / 0.05);
   }
 
   .sidebar-item:active {
@@ -468,13 +480,13 @@
   }
 
   .sidebar-item.active {
-    background: hsl(var(--primary) / 0.12);
+    background: hsl(var(--primary) / 0.15);
     color: hsl(var(--primary));
     font-weight: 500;
   }
 
   .sidebar-item.active:hover {
-    background: hsl(var(--primary) / 0.16);
+    background: hsl(var(--primary) / 0.18);
   }
 
   /* ===== Apple 毛玻璃效果 ===== */
@@ -529,15 +541,16 @@
     border-top: 0.5px solid hsl(var(--border));
   }
 
-  /* ===== Apple 风格列表 ===== */
+  /* ===== Zed + Apple 风格列表 ===== */
   .list-item-apple {
-    @apply flex items-center justify-between px-4 py-3;
-    min-height: 44px;
+    @apply flex items-center justify-between px-4 py-2.5;
+    min-height: 2.5rem;
     transition: background var(--duration-fast) var(--ease-default);
+    letter-spacing: -0.008em;
   }
 
   .list-item-apple:active {
-    background: hsl(var(--foreground) / 0.04);
+    background: hsl(var(--foreground) / 0.05);
   }
 
   .list-inset {
@@ -552,14 +565,15 @@
     margin-left: 16px;
   }
 
-  /* ===== Apple 风格按钮 ===== */
+  /* ===== Zed + Apple 风格按钮 ===== */
   .btn-apple {
-    @apply inline-flex items-center justify-center font-semibold;
-    border-radius: var(--radius-lg);
-    font-size: 17px;
-    height: 50px;
-    padding: 0 20px;
+    @apply inline-flex items-center justify-center font-medium;
+    border-radius: var(--radius);
+    font-size: 0.9375rem;
+    height: 2.5rem;
+    padding: 0 1rem;
     transition: all var(--duration-fast) var(--ease-default);
+    letter-spacing: -0.008em;
   }
 
   .btn-apple:active {
@@ -605,18 +619,19 @@
     background: hsl(var(--destructive) / 0.18);
   }
 
-  /* ===== Apple 风格输入框 ===== */
+  /* ===== Zed + Apple 风格输入框 ===== */
   .input-apple {
-    @apply w-full px-4 py-3 rounded-xl;
-    font-size: 17px;
+    @apply w-full px-3.5 py-2.5 rounded-lg;
+    font-size: 0.9375rem;
     background: hsl(var(--secondary));
     border: none;
     outline: none;
     transition: all var(--duration-fast) var(--ease-default);
+    letter-spacing: -0.008em;
   }
 
   .input-apple:focus {
-    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.2);
+    box-shadow: 0 0 0 0.1875rem hsl(var(--primary) / 0.15);
   }
 
   .input-apple::placeholder {
@@ -625,17 +640,18 @@
 
   /* 带边框的输入框 */
   .input-apple-bordered {
-    @apply w-full px-4 py-3 rounded-xl;
-    font-size: 17px;
+    @apply w-full px-3.5 py-2.5 rounded-lg;
+    font-size: 0.9375rem;
     background: hsl(var(--background));
-    border: 1px solid hsl(var(--border));
+    border: 0.0625rem solid hsl(var(--border));
     outline: none;
     transition: all var(--duration-fast) var(--ease-default);
+    letter-spacing: -0.008em;
   }
 
   .input-apple-bordered:focus {
     border-color: hsl(var(--primary));
-    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.15);
+    box-shadow: 0 0 0 0.1875rem hsl(var(--primary) / 0.1);
   }
 
   /* 搜索框 */
@@ -644,15 +660,16 @@
   }
 
   .search-apple input {
-    @apply w-full pl-10 pr-4 py-2 rounded-lg;
-    font-size: 17px;
+    @apply w-full pl-9 pr-3.5 py-2 rounded-md;
+    font-size: 0.9375rem;
     background: hsl(var(--secondary));
     border: none;
     outline: none;
+    letter-spacing: -0.008em;
   }
 
   .search-apple input:focus {
-    box-shadow: 0 0 0 4px hsl(var(--primary) / 0.2);
+    box-shadow: 0 0 0 0.1875rem hsl(var(--primary) / 0.15);
   }
 
   .search-apple .search-icon {
@@ -662,34 +679,35 @@
 
   /* ===== Apple 风格分割线 ===== */
   .divider-apple {
-    height: 0.5px;
+    height: 0.03125rem;
     background: hsl(var(--border));
   }
 
   .divider-inset {
-    height: 0.5px;
+    height: 0.03125rem;
     background: hsl(var(--border));
-    margin-left: 16px;
+    margin-left: 1rem;
   }
 
-  /* ===== Apple 聊天气泡 ===== */
+  /* ===== Zed + Apple 聊天气泡 ===== */
   .chat-bubble {
-    @apply relative px-4 py-2.5;
-    max-width: min(85%, 420px);
-    font-size: 17px;
-    line-height: 1.4;
+    @apply relative px-3.5 py-2.5;
+    max-width: min(85%, 26.25rem);
+    font-size: 0.9375rem;
+    line-height: 1.5;
     word-wrap: break-word;
+    letter-spacing: -0.008em;
   }
 
   .chat-bubble-user {
     @apply bg-primary text-primary-foreground;
-    border-radius: 18px 18px 4px 18px;
+    border-radius: 1rem 1rem 0.25rem 1rem;
   }
 
   .chat-bubble-assistant {
     background: hsl(var(--secondary));
     color: hsl(var(--foreground));
-    border-radius: 18px 18px 18px 4px;
+    border-radius: 1rem 1rem 1rem 0.25rem;
   }
 
   /* 连续消息圆角调整 */
@@ -722,13 +740,13 @@
 
   .switch-apple-thumb {
     @apply block h-[27px] w-[27px] rounded-full bg-white;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15), 0 1px 1px rgba(0, 0, 0, 0.1);
-    transform: translateX(2px);
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.15), 0 0.0625rem 0.0625rem rgba(0, 0, 0, 0.1);
+    transform: translateX(0.125rem);
     transition: transform var(--duration-normal) var(--ease-spring);
   }
 
   .switch-apple[data-state="checked"] .switch-apple-thumb {
-    transform: translateX(22px);
+    transform: translateX(1.375rem);
   }
 
   /* ===== Apple 分段控件 ===== */
@@ -752,13 +770,14 @@
     box-shadow: var(--shadow-sm);
   }
 
-  /* ===== Apple 徽章 ===== */
+  /* ===== Zed + Apple 风格徽章 ===== */
   .badge-apple {
     @apply inline-flex items-center justify-center px-2 py-0.5 rounded-full;
-    font-size: 12px;
+    font-size: 0.6875rem;
     font-weight: 600;
-    min-width: 20px;
-    height: 20px;
+    min-width: 1.125rem;
+    height: 1.125rem;
+    letter-spacing: 0;
   }
 
   .badge-apple-primary {
@@ -790,14 +809,14 @@
   /* ===== Apple 加载指示器 ===== */
   .spinner-apple {
     @apply relative;
-    width: 20px;
-    height: 20px;
+    width: 1.25rem;
+    height: 1.25rem;
   }
 
   .spinner-apple::before {
     content: '';
     @apply absolute inset-0 rounded-full;
-    border: 2px solid hsl(var(--foreground) / 0.1);
+    border: 0.125rem solid hsl(var(--foreground) / 0.1);
     border-top-color: hsl(var(--primary));
     animation: spin 0.8s linear infinite;
   }
@@ -815,29 +834,32 @@
     animation: shimmer 1.5s infinite;
   }
 
-  /* ===== Apple 工具提示 ===== */
+  /* ===== Zed + Apple 风格工具提示 ===== */
   .tooltip-apple {
-    @apply px-3 py-1.5 rounded-lg;
-    font-size: 13px;
+    @apply px-2.5 py-1.5 rounded-md;
+    font-size: 0.75rem;
     font-weight: 500;
     background: hsl(var(--foreground));
     color: hsl(var(--background));
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-md);
+    letter-spacing: -0.004em;
   }
 
-  /* ===== Apple 弹出菜单 ===== */
+  /* ===== Zed + Apple 风格弹出菜单 ===== */
   .menu-apple {
-    @apply rounded-xl overflow-hidden py-1;
+    @apply rounded-lg overflow-hidden py-1;
     background: hsl(var(--popover));
-    box-shadow: var(--shadow-xl);
-    border: 0.5px solid hsl(var(--border));
-    min-width: 200px;
+    box-shadow: var(--shadow-lg);
+    border: 0.03125rem solid hsl(var(--border));
+    min-width: 12.5rem;
   }
 
   .menu-apple-item {
-    @apply flex items-center gap-3 px-4 py-2 cursor-pointer;
-    font-size: 15px;
+    @apply flex items-center gap-2.5 px-3.5 py-2 cursor-pointer;
+    font-size: 0.875rem;
     transition: background var(--duration-fast) var(--ease-default);
+    letter-spacing: -0.008em;
+    min-height: 2.25rem;
   }
 
   .menu-apple-item:hover {
@@ -849,17 +871,17 @@
   }
 
   .menu-apple-separator {
-    height: 0.5px;
+    height: 0.03125rem;
     background: hsl(var(--border));
-    margin: 4px 0;
+    margin: 0.25rem 0;
   }
 
-  /* ===== Apple 模态框 ===== */
+  /* ===== Zed + Apple 风格模态框 ===== */
   .modal-apple-overlay {
     @apply fixed inset-0;
     background: rgba(0, 0, 0, 0.4);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
+    backdrop-filter: blur(0.25rem);
+    -webkit-backdrop-filter: blur(0.25rem);
   }
 
   .modal-apple {
@@ -871,20 +893,25 @@
   }
 
   .modal-apple-header {
-    @apply flex items-center justify-between px-5 py-4;
-    border-bottom: 0.5px solid hsl(var(--border));
+    @apply flex items-center justify-between px-5 py-3.5;
+    border-bottom: 0.03125rem solid hsl(var(--border));
+    min-height: 3.25rem;
   }
 
   .modal-apple-body {
     @apply px-5 py-4;
+    font-size: 0.9375rem;
+    line-height: 1.5;
+    letter-spacing: -0.008em;
   }
 
   .modal-apple-footer {
-    @apply flex items-center justify-end gap-3 px-5 py-4;
-    border-top: 0.5px solid hsl(var(--border));
+    @apply flex items-center justify-end gap-3 px-5 py-3.5;
+    border-top: 0.03125rem solid hsl(var(--border));
+    min-height: 3.25rem;
   }
 
-  /* ===== Apple Action Sheet ===== */
+  /* ===== Zed + Apple 风格 Action Sheet ===== */
   .action-sheet-apple {
     @apply fixed bottom-0 left-0 right-0 p-2;
   }
@@ -892,16 +919,18 @@
   .action-sheet-apple-content {
     @apply rounded-2xl overflow-hidden;
     background: hsl(var(--card) / 0.95);
-    backdrop-filter: blur(40px) saturate(200%);
-    -webkit-backdrop-filter: blur(40px) saturate(200%);
+    backdrop-filter: blur(2.5rem) saturate(200%);
+    -webkit-backdrop-filter: blur(2.5rem) saturate(200%);
   }
 
   .action-sheet-apple-item {
-    @apply flex items-center justify-center py-4;
-    font-size: 20px;
+    @apply flex items-center justify-center py-3.5;
+    font-size: 1.0625rem;
     font-weight: 400;
     color: hsl(var(--primary));
     transition: background var(--duration-fast) var(--ease-default);
+    letter-spacing: -0.008em;
+    min-height: 3rem;
   }
 
   .action-sheet-apple-item:active {
@@ -918,10 +947,12 @@
   }
 
   .action-sheet-apple-cancel-btn {
-    @apply flex items-center justify-center py-4;
-    font-size: 20px;
+    @apply flex items-center justify-center py-3.5;
+    font-size: 1.0625rem;
     font-weight: 600;
     color: hsl(var(--primary));
+    letter-spacing: -0.008em;
+    min-height: 3rem;
   }
 }
 
