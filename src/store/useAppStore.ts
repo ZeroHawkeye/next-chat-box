@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { devtools, persist } from "zustand/middleware"
 import type { App, Conversation, AppIcon, ChatTab, ChatPanel, PanelGroup, Workspace } from "@/types"
+import { configStorage } from "@/lib/config"
 
 // 侧边栏宽度配置
 export const SIDEBAR_MIN_WIDTH = 200
@@ -741,9 +742,15 @@ export const useAppStore = create<AppState>()(
         setSidebarWidth: (width) =>
           set({ sidebarWidth: Math.min(Math.max(width, SIDEBAR_MIN_WIDTH), SIDEBAR_MAX_WIDTH) }),
 
-        setSidebarOpen: (open) => set({ sidebarOpen: open }),
+        setSidebarOpen: (open) => {
+          set({ sidebarOpen: open })
+          configStorage.save({ sidebar_open: open })
+        },
 
-        setShowAppRail: (show) => set({ showAppRail: show }),
+        setShowAppRail: (show) => {
+          set({ showAppRail: show })
+          configStorage.save({ show_app_rail: show })
+        },
 
         setTheme: (theme) => set({ theme }),
       }),

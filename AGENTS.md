@@ -17,6 +17,7 @@ Tauri v2 + React 19 + TypeScript 跨平台应用，目标：Cherry Studio + Dify
 - `bun run tauri build` - 构建桌面应用
 - `bun run tauri dev` - 禁止在 agent 上下文中使用
 - `bun run preview` - 预览构建结果
+- `cargo check` - Rust 代码检查 (修改 src-tauri 代码时必须运行)
 
 ## Project Structure
 ```
@@ -73,5 +74,6 @@ const result = await invoke("command_name", { arg: value });
 
 ## Important Notes
 - 禁止运行 `dev` 或 `start` 命令启动服务
-- 使用 `bun run build` 验证代码正确性
+- 使用 `bun run build` 验证前端代码正确性
+- 修改 `src-tauri` 代码后，必须运行 `cargo check` 验证 Rust 代码
 - 使用中文回复

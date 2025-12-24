@@ -1,11 +1,11 @@
 import { useThemeStore, themeColors, ZOOM_MIN, ZOOM_MAX, ZOOM_DEFAULT, type ThemeMode, type ThemeColor } from "@/store/useThemeStore"
 import { useAppStore } from "@/store/useAppStore"
 import { Button } from "@/components/ui/button"
-import { 
-  Moon, 
-  Sun, 
-  Monitor, 
-  ArrowLeft, 
+import {
+  Moon,
+  Sun,
+  Monitor,
+  ArrowLeft,
   Check,
   Download,
   Trash2,
@@ -14,6 +14,7 @@ import {
 import { useNavigate } from "@tanstack/react-router"
 import { usePlatform } from "@/hooks/usePlatform"
 import { cn } from "@/lib/utils"
+import { configStorage } from "@/lib/config"
 
 // 开关组件
 function Switch({ 
@@ -50,6 +51,14 @@ export default function SettingsPage() {
   const { showAppRail, setShowAppRail } = useAppStore()
   const navigate = useNavigate()
   const { isMobileView } = usePlatform()
+
+  const handleClearData = async () => {
+    if (confirm("确定要清除所有数据吗？这将重置所有设置和对话记录。")) {
+      await configStorage.delete()
+      localStorage.clear()
+      location.reload()
+    }
+  }
 
   const themeModes: { value: ThemeMode; label: string; icon: React.ReactNode }[] = [
     { value: "light", label: "浅色", icon: <Sun className="w-3.5 h-3.5" /> },
@@ -240,6 +249,7 @@ export default function SettingsPage() {
               </button>
               
               <button
+                onClick={handleClearData}
                 className="w-full flex items-center gap-2.5 px-3 py-2 text-left border-t border-border/50 hover:bg-foreground/[0.03] transition-colors duration-100 text-red-500"
               >
                 <Trash2 className="w-3.5 h-3.5" />

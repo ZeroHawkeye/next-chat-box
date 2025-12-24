@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { persist, devtools } from "zustand/middleware"
+import { configStorage } from "@/lib/config"
 
 /**
  * 主题模式
@@ -207,18 +208,21 @@ export const useThemeStore = create<ThemeState & ThemeActions>()(
           const resolvedTheme = resolveTheme(mode)
           set({ mode, resolvedTheme })
           applyTheme(resolvedTheme, get().color)
+          configStorage.save({ theme: mode })
         },
 
         // 设置主题配色
         setColor: (color) => {
           set({ color })
           applyTheme(get().resolvedTheme, color)
+          configStorage.save({ color })
         },
 
         // 设置缩放比例
         setZoom: (zoom) => {
           set({ zoom })
           applyZoom(zoom)
+          configStorage.save({ zoom })
         },
 
         // 初始化主题
