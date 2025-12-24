@@ -1,0 +1,201 @@
+// ============================================================================
+// AI Chat Application Types
+// 参考 Cherry Studio 和 Dify 的设计模式
+// ============================================================================
+
+// ============================================================================
+// MCP (Model Context Protocol) 工具相关类型
+// ============================================================================
+
+export interface MCPServer {
+  id: string
+  name: string
+  description?: string
+  type: "stdio" | "sse"
+  command?: string
+  args?: string[]
+  env?: Record<string, string>
+  url?: string
+  enabled: boolean
+}
+
+export interface MCPTool {
+  id: string
+  serverId: string
+  name: string
+  description?: string
+  inputSchema?: Record<string, unknown>
+  enabled: boolean
+}
+
+export interface AppMCPConfig {
+  enabledServers: string[]
+  enabledTools: string[]
+}
+
+// ============================================================================
+// 模型配置相关类型
+// ============================================================================
+
+export interface ModelConfig {
+  modelId?: string
+  providerId?: string
+  temperature?: number
+  topP?: number
+  maxTokens?: number
+  frequencyPenalty?: number
+  presencePenalty?: number
+  stopSequences?: string[]
+  customParams?: Record<string, unknown>
+}
+
+// ============================================================================
+// 应用 (App/Agent) 相关类型
+// ============================================================================
+
+export type AppIconType = "emoji" | "lucide" | "url"
+
+export interface AppIcon {
+  type: AppIconType
+  value: string
+  bgColor?: string
+}
+
+export interface App {
+  id: string
+  name: string
+  description?: string
+  icon: AppIcon
+  systemPrompt: string
+  welcomeMessage?: string
+  modelConfig: ModelConfig
+  mcpConfig: AppMCPConfig
+  knowledgeBaseIds?: string[]
+  type: "assistant" | "agent" | "workflow"
+  isBuiltin: boolean
+  isPinned: boolean
+  sortOrder: number
+  createdAt: number
+  updatedAt: number
+}
+
+export interface CreateAppParams {
+  name: string
+  description?: string
+  icon?: AppIcon
+  systemPrompt?: string
+  welcomeMessage?: string
+  modelConfig?: ModelConfig
+  mcpConfig?: AppMCPConfig
+  type?: App["type"]
+}
+
+export interface UpdateAppParams extends Partial<CreateAppParams> {
+  isPinned?: boolean
+  sortOrder?: number
+}
+
+// ============================================================================
+// 对话 (Conversation) 相关类型
+// ============================================================================
+
+export interface Conversation {
+  id: string
+  appId: string
+  title: string
+  summary?: string
+  messageCount: number
+  isPinned: boolean
+  isArchived: boolean
+  createdAt: number
+  updatedAt: number
+}
+
+export interface CreateConversationParams {
+  appId: string
+  title?: string
+}
+
+// ============================================================================
+// 消息 (Message) 相关类型
+// ============================================================================
+
+export type MessageRole = "system" | "user" | "assistant" | "tool"
+export type MessageStatus = "pending" | "streaming" | "success" | "error"
+
+export interface TextContentBlock {
+  type: "text"
+  text: string
+}
+
+export interface ImageContentBlock {
+  type: "image"
+  url: string
+  alt?: string
+}
+
+export interface ToolUseContentBlock {
+  type: "tool_use"
+  toolId: string
+  toolName: string
+  input: Record<string, unknown>
+}
+
+export interface ToolResultContentBlock {
+  type: "tool_result"
+  toolId: string
+  toolName: string
+  output: string
+  isError?: boolean
+}
+
+export type ContentBlock =
+  | TextContentBlock
+  | ImageContentBlock
+  | ToolUseContentBlock
+  | ToolResultContentBlock
+
+export interface Message {
+  id: string
+  conversationId: string
+  role: MessageRole
+  content: ContentBlock[]
+  textContent: string
+  status: MessageStatus
+  error?: string
+  modelId?: string
+  usage?: {
+    promptTokens?: number
+    completionTokens?: number
+    totalTokens?: number
+  }
+  parentId?: string
+  createdAt: number
+}
+
+// ============================================================================
+// 预设应用模板
+// ============================================================================
+
+export type AppTemplateCategory =
+  | "general"
+  | "writing"
+  | "coding"
+  | "translation"
+  | "creative"
+  | "business"
+  | "education"
+  | "other"
+
+export interface AppTemplate {
+  id: string
+  name: string
+  description: string
+  icon: AppIcon
+  category: AppTemplateCategory
+  systemPrompt: string
+  welcomeMessage?: string
+  suggestedQuestions?: string[]
+  recommendedModelConfig?: Partial<ModelConfig>
+  isPopular?: boolean
+}

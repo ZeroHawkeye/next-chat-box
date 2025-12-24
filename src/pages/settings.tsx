@@ -1,4 +1,5 @@
 import { useThemeStore, themeColors, ZOOM_MIN, ZOOM_MAX, ZOOM_DEFAULT, type ThemeMode, type ThemeColor } from "@/store/useThemeStore"
+import { useAppStore } from "@/store/useAppStore"
 import { Button } from "@/components/ui/button"
 import { 
   Moon, 
@@ -7,14 +8,46 @@ import {
   ArrowLeft, 
   Check,
   Download,
-  Trash2
+  Trash2,
+  LayoutGrid
 } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
 import { usePlatform } from "@/hooks/usePlatform"
 import { cn } from "@/lib/utils"
 
+// 开关组件
+function Switch({ 
+  checked, 
+  onChange 
+}: { 
+  checked: boolean
+  onChange: (checked: boolean) => void 
+}) {
+  return (
+    <button
+      role="switch"
+      aria-checked={checked}
+      onClick={() => onChange(!checked)}
+      className={cn(
+        "relative inline-flex h-5 w-9 shrink-0 cursor-pointer items-center rounded-full",
+        "transition-colors duration-200",
+        checked ? "bg-primary" : "bg-foreground/20"
+      )}
+    >
+      <span
+        className={cn(
+          "block h-4 w-4 rounded-full bg-white shadow-sm",
+          "transition-transform duration-200",
+          checked ? "translate-x-[18px]" : "translate-x-[2px]"
+        )}
+      />
+    </button>
+  )
+}
+
 export default function SettingsPage() {
   const { mode, color, zoom, setMode, setColor, setZoom } = useThemeStore()
+  const { showAppRail, setShowAppRail } = useAppStore()
   const navigate = useNavigate()
   const { isMobileView } = usePlatform()
 
@@ -165,6 +198,29 @@ export default function SettingsPage() {
                   </div>
                   <span className="text-[10px] text-muted-foreground/60 w-8">{ZOOM_MAX}%</span>
                 </div>
+              </div>
+            </div>
+          </section>
+
+          {/* 布局 */}
+          <section>
+            <div className="text-[11px] font-medium text-muted-foreground uppercase tracking-wider mb-2 px-1">
+              布局
+            </div>
+            
+            <div className="border border-border/50 rounded-lg overflow-hidden">
+              {/* 应用栏开关 */}
+              <div className="flex items-center justify-between px-3 py-2.5">
+                <div className="flex items-center gap-2.5">
+                  <LayoutGrid className="w-3.5 h-3.5 text-muted-foreground" />
+                  <div>
+                    <div className="text-[13px]">显示应用栏</div>
+                    <div className="text-[11px] text-muted-foreground">
+                      左侧快速切换不同应用
+                    </div>
+                  </div>
+                </div>
+                <Switch checked={showAppRail} onChange={setShowAppRail} />
               </div>
             </div>
           </section>
