@@ -199,3 +199,52 @@ export interface AppTemplate {
   recommendedModelConfig?: Partial<ModelConfig>
   isPopular?: boolean
 }
+
+// ============================================================================
+// 多 Tab 和多面板相关类型
+// ============================================================================
+
+/**
+ * 单个 Tab 表示一个会话
+ */
+export interface ChatTab {
+  id: string
+  conversationId: string
+  title: string
+  appId: string
+  isPinned?: boolean
+}
+
+/**
+ * 面板 - 包含多个 Tab
+ */
+export interface ChatPanel {
+  id: string
+  tabs: ChatTab[]
+  activeTabId: string | null
+}
+
+/**
+ * 面板布局方向
+ */
+export type SplitDirection = "horizontal" | "vertical"
+
+/**
+ * 面板组 - 可嵌套的面板布局结构
+ */
+export interface PanelGroup {
+  id: string
+  direction: SplitDirection
+  sizes: number[] // 各子项的大小比例
+  children: (ChatPanel | PanelGroup)[]
+}
+
+/**
+ * 工作区配置 - 管理整个多面板布局
+ */
+export interface Workspace {
+  id: string
+  name: string
+  // 根节点可以是单个面板或面板组
+  root: ChatPanel | PanelGroup
+}

@@ -2,7 +2,7 @@ import { useAppStore } from "@/store/useAppStore"
 import { Button } from "@/components/ui/button"
 import { SearchInput } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
-import { Plus, MessageSquare, Trash2, Pin, MoreHorizontal } from "lucide-react"
+import { Plus, MessageSquare, Trash2, Pin, MoreHorizontal, ExternalLink } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
 import type { App } from "@/types"
@@ -35,15 +35,20 @@ export function ConversationList({ className, style }: ConversationListProps) {
     currentAppId,
     conversations,
     currentConversationId,
-    setCurrentConversation,
     createConversation,
     deleteConversation,
+    openTab,
+    getOpenTabs,
   } = useAppStore()
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState("")
 
   // 获取当前应用
   const currentApp = apps.find((app) => app.id === currentAppId)
+
+  // 获取已打开的Tab
+  const openTabs = getOpenTabs()
+  const openConversationIds = new Set(openTabs.map((t) => t.conversationId))
 
   // 过滤当前应用的对话
   const appConversations = conversations.filter(
@@ -65,12 +70,12 @@ export function ConversationList({ className, style }: ConversationListProps) {
   const handleNewConversation = () => {
     if (!currentAppId) return
     const conversationId = createConversation(currentAppId)
-    setCurrentConversation(conversationId)
+    openTab(conversationId)
     navigate({ to: "/chat" })
   }
 
   const handleSelectConversation = (conversationId: string) => {
-    setCurrentConversation(conversationId)
+    openTab(conversationId)
     navigate({ to: "/chat" })
   }
 
@@ -144,69 +149,79 @@ export function ConversationList({ className, style }: ConversationListProps) {
           </div>
         ) : (
           <div className="space-y-0.5">
-            {sortedConversations.map((conv) => (
-              <div
-                key={conv.id}
-                onClick={() => handleSelectConversation(conv.id)}
-                className={cn(
-                  "group flex items-start gap-2 px-2.5 py-2 rounded-lg cursor-pointer",
-                  "transition-colors duration-100",
-                  currentConversationId === conv.id
-                    ? "bg-primary/10 text-primary"
-                    : "hover:bg-foreground/[0.04] active:bg-foreground/[0.06]"
-                )}
-              >
-                <MessageSquare
+            {sortedConversations.map((conv) => {
+              const isOpen = openConversationIds.has(conv.id)
+              const isActive = currentConversationId === conv.id
+
+              return (
+                <div
+                  key={conv.id}
+                  onClick={() => handleSelectConversation(conv.id)}
                   className={cn(
-                    "w-4 h-4 flex-shrink-0 mt-0.5",
-                    currentConversationId === conv.id
-                      ? "text-primary"
-                      : "text-muted-foreground"
+                    "group flex items-start gap-2 px-2.5 py-2 rounded-lg cursor-pointer",
+                    "transition-colors duration-100",
+                    isActive
+                      ? "bg-primary/10 text-primary"
+                      : isOpen
+                        ? "bg-foreground/[0.03] text-foreground"
+                        : "hover:bg-foreground/[0.04] active:bg-foreground/[0.06]"
                   )}
-                />
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1">
-                    {conv.isPinned && (
-                      <Pin className="w-3 h-3 text-primary flex-shrink-0" />
+                >
+                  <MessageSquare
+                    className={cn(
+                      "w-4 h-4 flex-shrink-0 mt-0.5",
+                      isActive
+                        ? "text-primary"
+                        : "text-muted-foreground"
                     )}
-                    <span
-                      className={cn(
-                        "text-[13px] truncate",
-                        currentConversationId === conv.id && "font-medium"
+                  />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-1">
+                      {conv.isPinned && (
+                        <Pin className="w-3 h-3 text-primary flex-shrink-0" />
                       )}
+                      {isOpen && !isActive && (
+                        <ExternalLink className="w-3 h-3 text-muted-foreground flex-shrink-0" />
+                      )}
+                      <span
+                        className={cn(
+                          "text-[13px] truncate",
+                          isActive && "font-medium"
+                        )}
+                      >
+                        {conv.title}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-2 mt-0.5">
+                      <span className="text-[11px] text-muted-foreground">
+                        {conv.messageCount} 条消息
+                      </span>
+                      <span className="text-[11px] text-muted-foreground">
+                        {formatTime(conv.updatedAt)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      className="h-6 w-6 rounded"
+                      onClick={(e) => handleDeleteConversation(e, conv.id)}
                     >
-                      {conv.title}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-2 mt-0.5">
-                    <span className="text-[11px] text-muted-foreground">
-                      {conv.messageCount} 条消息
-                    </span>
-                    <span className="text-[11px] text-muted-foreground">
-                      {formatTime(conv.updatedAt)}
-                    </span>
+                      <Trash2 className="w-3 h-3" />
+                    </Button>
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      className="h-6 w-6 rounded"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <MoreHorizontal className="w-3 h-3" />
+                    </Button>
                   </div>
                 </div>
-                <div className="flex items-center gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Button
-                    size="icon-sm"
-                    variant="ghost"
-                    className="h-6 w-6 rounded"
-                    onClick={(e) => handleDeleteConversation(e, conv.id)}
-                  >
-                    <Trash2 className="w-3 h-3" />
-                  </Button>
-                  <Button
-                    size="icon-sm"
-                    variant="ghost"
-                    className="h-6 w-6 rounded"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <MoreHorizontal className="w-3 h-3" />
-                  </Button>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         )}
       </div>

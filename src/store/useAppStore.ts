@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { devtools, persist } from "zustand/middleware"
-import type { App, Conversation, AppIcon } from "@/types"
+import type { App, Conversation, AppIcon, ChatTab, ChatPanel, PanelGroup, Workspace } from "@/types"
 
 // 侧边栏宽度配置
 export const SIDEBAR_MIN_WIDTH = 200
@@ -135,6 +135,75 @@ const mockConversations: Conversation[] = [
   },
 ]
 
+// 创建默认面板
+function createDefaultPanel(): ChatPanel {
+  return {
+    id: `panel-${Date.now()}`,
+    tabs: [],
+    activeTabId: null,
+  }
+}
+
+// 创建默认工作区
+function createDefaultWorkspace(): Workspace {
+  return {
+    id: "default-workspace",
+    name: "默认工作区",
+    root: createDefaultPanel(),
+  }
+}
+
+// 辅助函数：判断是否是面板组
+export function isPanelGroup(node: ChatPanel | PanelGroup): node is PanelGroup {
+  return "children" in node && "direction" in node
+}
+
+// 辅助函数：在布局中查找面板
+function findPanelInLayout(
+  node: ChatPanel | PanelGroup,
+  panelId: string
+): ChatPanel | null {
+  if (!isPanelGroup(node)) {
+    return node.id === panelId ? node : null
+  }
+  for (const child of node.children) {
+    const found = findPanelInLayout(child, panelId)
+    if (found) return found
+  }
+  return null
+}
+
+// 辅助函数：更新布局中的面板
+function updatePanelInLayout(
+  node: ChatPanel | PanelGroup,
+  panelId: string,
+  updater: (panel: ChatPanel) => ChatPanel
+): ChatPanel | PanelGroup {
+  if (!isPanelGroup(node)) {
+    return node.id === panelId ? updater(node) : node
+  }
+  return {
+    ...node,
+    children: node.children.map((child) =>
+      updatePanelInLayout(child, panelId, updater)
+    ),
+  }
+}
+
+// 辅助函数：获取所有面板
+function getAllPanels(node: ChatPanel | PanelGroup): ChatPanel[] {
+  if (!isPanelGroup(node)) {
+    return [node]
+  }
+  return node.children.flatMap((child) => getAllPanels(child))
+}
+
+// 辅助函数：获取所有打开的Tab
+function getAllTabs(node: ChatPanel | PanelGroup): ChatTab[] {
+  const panels = getAllPanels(node)
+  return panels.flatMap((panel) => panel.tabs)
+}
+
 export interface AppState {
   // App 状态
   apps: App[]
@@ -143,6 +212,10 @@ export interface AppState {
   // Conversation 状态
   conversations: Conversation[]
   currentConversationId: string | null
+  
+  // 多面板工作区状态
+  workspace: Workspace
+  activePanelId: string | null
   
   // Legacy Chat state (保持兼容)
   chats: Chat[]
@@ -166,6 +239,22 @@ export interface AppState {
   createConversation: (appId: string, title?: string) => string
   deleteConversation: (conversationId: string) => void
   
+  // Tab Actions
+  openTab: (conversationId: string, panelId?: string) => void
+  closeTab: (tabId: string, panelId: string) => void
+  setActiveTab: (tabId: string, panelId: string) => void
+  moveTab: (tabId: string, fromPanelId: string, toPanelId: string, index?: number) => void
+  
+  // Panel Actions
+  setActivePanel: (panelId: string) => void
+  splitPanel: (panelId: string, direction: "horizontal" | "vertical") => void
+  closePanel: (panelId: string) => void
+  updatePanelSizes: (panelGroupId: string, sizes: number[]) => void
+  
+  // 辅助方法
+  getOpenTabs: () => ChatTab[]
+  getPanel: (panelId: string) => ChatPanel | null
+  
   // Legacy Actions (保持兼容)
   createChat: (title?: string) => string
   deleteChat: (chatId: string) => void
@@ -183,12 +272,14 @@ export interface AppState {
 export const useAppStore = create<AppState>()(
   devtools(
     persist(
-      (set) => ({
+      (set, get) => ({
         // Initial state
         apps: builtinApps,
         currentAppId: "default-assistant",
         conversations: mockConversations,
         currentConversationId: null,
+        workspace: createDefaultWorkspace(),
+        activePanelId: null,
         chats: [],
         currentChatId: null,
         isProcessing: false,
@@ -265,6 +356,316 @@ export const useAppStore = create<AppState>()(
             currentConversationId:
               state.currentConversationId === conversationId ? null : state.currentConversationId,
           }))
+        },
+
+        // Tab Actions
+        openTab: (conversationId, panelId) => {
+          const state = get()
+          const conversation = state.conversations.find((c) => c.id === conversationId)
+          if (!conversation) return
+          
+          // 检查是否已经打开
+          const allTabs = getAllTabs(state.workspace.root)
+          const existingTab = allTabs.find((t) => t.conversationId === conversationId)
+          
+          if (existingTab) {
+            // 如果已经打开，激活该 Tab
+            const panels = getAllPanels(state.workspace.root)
+            const panel = panels.find((p) => p.tabs.some((t) => t.id === existingTab.id))
+            if (panel) {
+              set({
+                workspace: {
+                  ...state.workspace,
+                  root: updatePanelInLayout(state.workspace.root, panel.id, (p) => ({
+                    ...p,
+                    activeTabId: existingTab.id,
+                  })),
+                },
+                activePanelId: panel.id,
+                currentConversationId: conversationId,
+              })
+            }
+            return
+          }
+
+          // 创建新 Tab
+          const newTab: ChatTab = {
+            id: `tab-${Date.now()}`,
+            conversationId,
+            title: conversation.title,
+            appId: conversation.appId,
+          }
+
+          // 确定目标面板
+          let targetPanelId = panelId || state.activePanelId
+          if (!targetPanelId) {
+            const panels = getAllPanels(state.workspace.root)
+            targetPanelId = panels[0]?.id
+          }
+
+          if (!targetPanelId) {
+            // 没有面板，创建一个
+            const newPanel = createDefaultPanel()
+            newPanel.tabs = [newTab]
+            newPanel.activeTabId = newTab.id
+            set({
+              workspace: {
+                ...state.workspace,
+                root: newPanel,
+              },
+              activePanelId: newPanel.id,
+              currentConversationId: conversationId,
+            })
+            return
+          }
+
+          set({
+            workspace: {
+              ...state.workspace,
+              root: updatePanelInLayout(state.workspace.root, targetPanelId, (panel) => ({
+                ...panel,
+                tabs: [...panel.tabs, newTab],
+                activeTabId: newTab.id,
+              })),
+            },
+            activePanelId: targetPanelId,
+            currentConversationId: conversationId,
+          })
+        },
+
+        closeTab: (tabId, panelId) => {
+          set((state) => {
+            const newRoot = updatePanelInLayout(state.workspace.root, panelId, (panel) => {
+              const newTabs = panel.tabs.filter((t) => t.id !== tabId)
+              const wasActive = panel.activeTabId === tabId
+              return {
+                ...panel,
+                tabs: newTabs,
+                activeTabId: wasActive
+                  ? newTabs[newTabs.length - 1]?.id || null
+                  : panel.activeTabId,
+              }
+            })
+            
+            // 更新当前会话ID
+            const panels = getAllPanels(newRoot)
+            const activePanel = panels.find((p) => p.id === state.activePanelId)
+            const activeTab = activePanel?.tabs.find((t) => t.id === activePanel.activeTabId)
+            
+            return {
+              workspace: {
+                ...state.workspace,
+                root: newRoot,
+              },
+              currentConversationId: activeTab?.conversationId || null,
+            }
+          })
+        },
+
+        setActiveTab: (tabId, panelId) => {
+          set((state) => {
+            const panel = findPanelInLayout(state.workspace.root, panelId)
+            const tab = panel?.tabs.find((t) => t.id === tabId)
+            
+            return {
+              workspace: {
+                ...state.workspace,
+                root: updatePanelInLayout(state.workspace.root, panelId, (p) => ({
+                  ...p,
+                  activeTabId: tabId,
+                })),
+              },
+              activePanelId: panelId,
+              currentConversationId: tab?.conversationId || null,
+            }
+          })
+        },
+
+        moveTab: (tabId, fromPanelId, toPanelId, index) => {
+          set((state) => {
+            // 找到要移动的 Tab
+            const fromPanel = findPanelInLayout(state.workspace.root, fromPanelId)
+            const tab = fromPanel?.tabs.find((t) => t.id === tabId)
+            if (!tab) return state
+
+            // 从源面板移除
+            let newRoot = updatePanelInLayout(state.workspace.root, fromPanelId, (panel) => {
+              const newTabs = panel.tabs.filter((t) => t.id !== tabId)
+              return {
+                ...panel,
+                tabs: newTabs,
+                activeTabId: panel.activeTabId === tabId
+                  ? newTabs[newTabs.length - 1]?.id || null
+                  : panel.activeTabId,
+              }
+            })
+
+            // 添加到目标面板
+            newRoot = updatePanelInLayout(newRoot, toPanelId, (panel) => {
+              const newTabs = [...panel.tabs]
+              if (index !== undefined) {
+                newTabs.splice(index, 0, tab)
+              } else {
+                newTabs.push(tab)
+              }
+              return {
+                ...panel,
+                tabs: newTabs,
+                activeTabId: tab.id,
+              }
+            })
+
+            return {
+              workspace: {
+                ...state.workspace,
+                root: newRoot,
+              },
+              activePanelId: toPanelId,
+              currentConversationId: tab.conversationId,
+            }
+          })
+        },
+
+        // Panel Actions
+        setActivePanel: (panelId) => {
+          set((state) => {
+            const panel = findPanelInLayout(state.workspace.root, panelId)
+            const activeTab = panel?.tabs.find((t) => t.id === panel.activeTabId)
+            return {
+              activePanelId: panelId,
+              currentConversationId: activeTab?.conversationId || state.currentConversationId,
+            }
+          })
+        },
+
+        splitPanel: (panelId, direction) => {
+          set((state) => {
+            const currentPanel = findPanelInLayout(state.workspace.root, panelId)
+            if (!currentPanel) return state
+
+            const newPanel = createDefaultPanel()
+            
+            // 如果当前根节点就是这个面板
+            if (!isPanelGroup(state.workspace.root) && state.workspace.root.id === panelId) {
+              const newGroup: PanelGroup = {
+                id: `group-${Date.now()}`,
+                direction,
+                sizes: [50, 50],
+                children: [currentPanel, newPanel],
+              }
+              return {
+                workspace: {
+                  ...state.workspace,
+                  root: newGroup,
+                },
+                activePanelId: newPanel.id,
+              }
+            }
+
+            // 在面板组中查找并替换
+            function splitInGroup(node: ChatPanel | PanelGroup): ChatPanel | PanelGroup {
+              if (!isPanelGroup(node)) {
+                if (node.id === panelId) {
+                  const newGroup: PanelGroup = {
+                    id: `group-${Date.now()}`,
+                    direction,
+                    sizes: [50, 50],
+                    children: [node, newPanel],
+                  }
+                  return newGroup
+                }
+                return node
+              }
+              return {
+                ...node,
+                children: node.children.map((child) => splitInGroup(child)),
+              }
+            }
+
+            return {
+              workspace: {
+                ...state.workspace,
+                root: splitInGroup(state.workspace.root),
+              },
+              activePanelId: newPanel.id,
+            }
+          })
+        },
+
+        closePanel: (panelId) => {
+          set((state) => {
+            // 如果只有一个面板，不能关闭
+            const allPanels = getAllPanels(state.workspace.root)
+            if (allPanels.length <= 1) return state
+
+            function removePanel(node: ChatPanel | PanelGroup): ChatPanel | PanelGroup | null {
+              if (!isPanelGroup(node)) {
+                return node.id === panelId ? null : node
+              }
+
+              const newChildren = node.children
+                .map((child) => removePanel(child))
+                .filter((child): child is ChatPanel | PanelGroup => child !== null)
+
+              if (newChildren.length === 0) return null
+              if (newChildren.length === 1) return newChildren[0]
+
+              return {
+                ...node,
+                children: newChildren,
+                sizes: newChildren.map(() => 100 / newChildren.length),
+              }
+            }
+
+            const newRoot = removePanel(state.workspace.root)
+            if (!newRoot) return state
+
+            const remainingPanels = getAllPanels(newRoot)
+            const newActivePanel = remainingPanels[0]
+
+            return {
+              workspace: {
+                ...state.workspace,
+                root: newRoot,
+              },
+              activePanelId: newActivePanel?.id || null,
+              currentConversationId: newActivePanel?.tabs.find(
+                (t) => t.id === newActivePanel.activeTabId
+              )?.conversationId || null,
+            }
+          })
+        },
+
+        updatePanelSizes: (panelGroupId, sizes) => {
+          set((state) => {
+            function updateSizes(node: ChatPanel | PanelGroup): ChatPanel | PanelGroup {
+              if (!isPanelGroup(node)) return node
+              if (node.id === panelGroupId) {
+                return { ...node, sizes }
+              }
+              return {
+                ...node,
+                children: node.children.map((child) => updateSizes(child)),
+              }
+            }
+            return {
+              workspace: {
+                ...state.workspace,
+                root: updateSizes(state.workspace.root),
+              },
+            }
+          })
+        },
+
+        // 辅助方法
+        getOpenTabs: () => {
+          const state = get()
+          return getAllTabs(state.workspace.root)
+        },
+
+        getPanel: (panelId) => {
+          const state = get()
+          return findPanelInLayout(state.workspace.root, panelId)
         },
 
         // Legacy Actions
@@ -353,6 +754,8 @@ export const useAppStore = create<AppState>()(
           currentAppId: state.currentAppId,
           conversations: state.conversations,
           currentConversationId: state.currentConversationId,
+          workspace: state.workspace,
+          activePanelId: state.activePanelId,
           sidebarOpen: state.sidebarOpen,
           sidebarWidth: state.sidebarWidth,
           showAppRail: state.showAppRail,
@@ -372,6 +775,8 @@ export const useAppStore = create<AppState>()(
             ],
             // 如果没有选中的应用，默认选择第一个内置应用
             currentAppId: persisted.currentAppId || "default-assistant",
+            // 确保工作区存在
+            workspace: persisted.workspace || createDefaultWorkspace(),
           }
         },
       }
