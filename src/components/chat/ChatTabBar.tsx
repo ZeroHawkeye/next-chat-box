@@ -146,7 +146,7 @@ export function ChatTabBar({ panel, onClose, canClose }: ChatTabBarProps) {
   }
 
   return (
-    <div className="flex items-center h-9 bg-sidebar border-b border-border/50 gap-0.5 px-1">
+    <div className="flex items-center h-9 bg-background-secondary border-b border-border gap-0.5 px-1">
       {/* Tabs */}
       <div className="flex-1 flex items-center gap-0.5 overflow-x-auto scrollbar-none min-w-0">
         {panel.tabs.map((tab, index) => {

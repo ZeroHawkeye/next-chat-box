@@ -96,10 +96,10 @@ const buttonVariants = cva(
         
         // 玻璃态按钮
         glass: [
-          "bg-background/60 backdrop-blur-xl",
-          "border-0.5 border-border/50",
+          "bg-background/70 backdrop-blur-xl",
+          "border border-border",
           "text-foreground",
-          "hover:bg-background/80",
+          "hover:bg-background/85",
           "shadow-apple-sm",
         ].join(" "),
         

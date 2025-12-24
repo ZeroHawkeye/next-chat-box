@@ -150,7 +150,7 @@ export function AppRail({ className }: AppRailProps) {
   return (
     <div
       className={cn(
-        "flex flex-col h-full bg-background/50 border-r border-border/40",
+        "flex flex-col h-full bg-background-secondary border-r border-border",
         className
       )}
       style={{ width: APP_RAIL_WIDTH }}
@@ -190,8 +190,8 @@ export function AppRail({ className }: AppRailProps) {
               onClick={handleAppsPage}
               className={cn(
                 "w-8 h-8 flex items-center justify-center rounded-[10px]",
-                "border border-dashed border-border/60 hover:border-primary/40",
-                "text-muted-foreground/50 hover:text-primary/70",
+                "border border-dashed border-border hover:border-primary/60",
+                "text-muted-foreground/60 hover:text-primary",
                 "hover:bg-primary/5 transition-all duration-150 active:scale-95"
               )}
             >
@@ -202,7 +202,7 @@ export function AppRail({ className }: AppRailProps) {
       </div>
 
       {/* 底部操作 */}
-      <div className="flex-shrink-0 py-2 px-1.5 border-t border-border/30">
+      <div className="flex-shrink-0 py-2 px-1.5 border-t border-border">
         <div className="flex flex-col items-center gap-1">
           <ActionButton icon={LayoutGrid} label="应用管理" onClick={handleAppsPage} />
           <ActionButton icon={Settings} label="设置" onClick={handleSettings} />

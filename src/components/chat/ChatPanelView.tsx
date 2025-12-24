@@ -83,10 +83,10 @@ function WelcomeScreen({
             onClick={() => onQuickPrompt(prompt)}
             className={cn(
               "px-3 py-1.5 rounded-lg text-[13px]",
-              "bg-secondary/70 text-muted-foreground",
-              "hover:bg-secondary hover:text-foreground",
+              "bg-secondary text-muted-foreground",
+              "hover:bg-secondary/80 hover:text-foreground",
               "transition-colors duration-150",
-              "border border-border/50"
+              "border border-border"
             )}
           >
             {prompt}
@@ -356,9 +356,9 @@ export function ChatPanelView({ panel, isActive, canClose }: ChatPanelProps) {
           </div>
 
           {/* Input Area */}
-          <div className="flex-shrink-0 border-t border-border/50 p-3">
+          <div className="flex-shrink-0 border-t border-border bg-background p-3">
             <div className="max-w-2xl mx-auto">
-              <div className="flex items-end gap-2 bg-secondary/50 rounded-xl p-2 border border-border/50">
+              <div className="flex items-end gap-2 bg-secondary rounded-xl p-2 border border-border">
                 <textarea
                   ref={textareaRef}
                   value={input}

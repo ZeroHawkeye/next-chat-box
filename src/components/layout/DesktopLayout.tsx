@@ -68,7 +68,7 @@ export function DesktopLayout({ children }: DesktopLayoutProps) {
   }
 
   return (
-    <div className="flex flex-col h-screen bg-background border border-border/50 rounded-sm overflow-hidden">
+    <div className="flex flex-col h-screen bg-background border border-border rounded-sm overflow-hidden">
       {/* 自定义标题栏 */}
       <TitleBar />
 

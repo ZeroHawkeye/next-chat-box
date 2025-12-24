@@ -117,8 +117,8 @@ export function TitleBar({ className }: TitleBarProps) {
     <header
       className={cn(
         "h-8 flex items-center select-none flex-shrink-0",
-        "bg-titlebar/80 backdrop-blur-2xl backdrop-saturate-150",
-        "border-b border-titlebar-border/40",
+        "bg-titlebar/90 backdrop-blur-2xl backdrop-saturate-150",
+        "border-b border-titlebar-border",
         "transition-colors duration-normal ease-apple",
         className
       )}
