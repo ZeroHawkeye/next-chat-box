@@ -1,5 +1,6 @@
 import { ReactNode } from "react"
 import { usePlatform } from "@/hooks/usePlatform"
+import { useGlobalShortcuts } from "@/hooks/useGlobalShortcuts"
 import { DesktopLayout } from "./DesktopLayout"
 import { MobileLayout } from "./MobileLayout"
 import { WebLayout } from "./WebLayout"
@@ -14,6 +15,9 @@ interface AppLayoutProps {
  */
 export function AppLayout({ children }: AppLayoutProps) {
   const { platform, isMobileView } = usePlatform()
+
+  // 注册全局快捷键
+  useGlobalShortcuts()
 
   // Tauri 桌面应用
   if (platform === "desktop") {

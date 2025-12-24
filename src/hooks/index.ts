@@ -3,3 +3,4 @@
  */
 
 export { usePlatform, useBreakpoint, useMediaQuery } from "./usePlatform"
+export { useGlobalShortcuts } from "./useGlobalShortcuts"

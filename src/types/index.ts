@@ -248,3 +248,53 @@ export interface Workspace {
   // 根节点可以是单个面板或面板组
   root: ChatPanel | PanelGroup
 }
+
+// ============================================================================
+// 快捷键相关类型
+// ============================================================================
+
+/**
+ * 快捷键动作标识
+ */
+export type ShortcutAction =
+  | "newChat"
+  | "newWindow"
+  | "closeTab"
+  | "nextTab"
+  | "prevTab"
+  | "toggleSidebar"
+  | "openSettings"
+  | "search"
+  | "sendMessage"
+  | "newLine"
+  | "focusInput"
+  | "switchToTab1"
+  | "switchToTab2"
+  | "switchToTab3"
+  | "switchToTab4"
+  | "switchToTab5"
+  | "switchToTab6"
+  | "switchToTab7"
+  | "switchToTab8"
+  | "switchToTab9"
+
+/**
+ * 快捷键配置
+ */
+export interface ShortcutConfig {
+  action: ShortcutAction
+  label: string
+  description: string
+  keys: string[] // 例如: ["Ctrl", "N"] 或 ["Meta", "Shift", "N"]
+  enabled: boolean
+  editable: boolean // 是否可由用户编辑
+}
+
+/**
+ * 快捷键分组
+ */
+export interface ShortcutGroup {
+  id: string
+  label: string
+  shortcuts: ShortcutConfig[]
+}
