@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { X } from "lucide-react"
-import { AppRail } from "./AppRail"
+import { AssistantRail } from "./AssistantRail"
 import { ConversationList } from "./ConversationList"
-import { useAppStore } from "@/store/useAppStore"
+import { useAssistantStore } from "@/store/useAssistantStore"
 import { useState } from "react"
 
 interface SidebarProps {
@@ -14,7 +14,7 @@ interface SidebarProps {
 }
 
 export function Sidebar({ className, style, onClose, showCloseButton = false }: SidebarProps) {
-  const { showAppRail } = useAppStore()
+  const { showAssistantRail } = useAssistantStore()
   const [hoverRail, setHoverRail] = useState(false)
 
   return (
@@ -22,9 +22,9 @@ export function Sidebar({ className, style, onClose, showCloseButton = false }: 
       className={cn("flex h-full bg-sidebar", className)}
       style={style}
     >
-      {/* 左侧应用图标栏 (可隐藏，悬浮时显示) */}
-      {showAppRail ? (
-        <AppRail />
+      {/* 左侧助手图标栏 (可隐藏，悬浮时显示) */}
+      {showAssistantRail ? (
+        <AssistantRail />
       ) : (
         <div
           className="relative group"
@@ -34,7 +34,7 @@ export function Sidebar({ className, style, onClose, showCloseButton = false }: 
           {/* 悬浮区 - 占位触发区 */}
           <div className="w-4 h-full cursor-pointer" />
           
-          {/* 悬浮显示的 AppRail */}
+          {/* 悬浮显示的 AssistantRail */}
           <div
             className={cn(
               "absolute top-0 left-0 h-full",
@@ -42,7 +42,7 @@ export function Sidebar({ className, style, onClose, showCloseButton = false }: 
               hoverRail ? "opacity-100 z-50 shadow-xl" : "opacity-0 pointer-events-none"
             )}
           >
-            <AppRail />
+            <AssistantRail />
           </div>
         </div>
       )}

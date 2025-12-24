@@ -28,7 +28,7 @@ export interface MCPTool {
   enabled: boolean
 }
 
-export interface AppMCPConfig {
+export interface AssistantMCPConfig {
   enabledServers: string[]
   enabledTools: string[]
 }
@@ -50,28 +50,28 @@ export interface ModelConfig {
 }
 
 // ============================================================================
-// 应用 (App/Agent) 相关类型
+// 助手 (Assistant) 相关类型
 // ============================================================================
 
-export type AppIconType = "emoji" | "lucide" | "url"
+export type AssistantIconType = "emoji" | "lucide" | "url"
 
-export interface AppIcon {
-  type: AppIconType
+export interface AssistantIcon {
+  type: AssistantIconType
   value: string
   bgColor?: string
 }
 
-export interface App {
+export interface Assistant {
   id: string
   name: string
   description?: string
-  icon: AppIcon
+  icon: AssistantIcon
   systemPrompt: string
   welcomeMessage?: string
   modelConfig: ModelConfig
-  mcpConfig: AppMCPConfig
+  mcpConfig: AssistantMCPConfig
   knowledgeBaseIds?: string[]
-  type: "assistant" | "agent" | "workflow"
+  type: "simple" | "workflow"  // simple=仅prompt, workflow=编排流程
   isBuiltin: boolean
   isPinned: boolean
   sortOrder: number
@@ -79,18 +79,18 @@ export interface App {
   updatedAt: number
 }
 
-export interface CreateAppParams {
+export interface CreateAssistantParams {
   name: string
   description?: string
-  icon?: AppIcon
+  icon?: AssistantIcon
   systemPrompt?: string
   welcomeMessage?: string
   modelConfig?: ModelConfig
-  mcpConfig?: AppMCPConfig
-  type?: App["type"]
+  mcpConfig?: AssistantMCPConfig
+  type?: Assistant["type"]
 }
 
-export interface UpdateAppParams extends Partial<CreateAppParams> {
+export interface UpdateAssistantParams extends Partial<CreateAssistantParams> {
   isPinned?: boolean
   sortOrder?: number
 }
@@ -174,10 +174,10 @@ export interface Message {
 }
 
 // ============================================================================
-// 预设应用模板
+// 预设助手模板
 // ============================================================================
 
-export type AppTemplateCategory =
+export type AssistantTemplateCategory =
   | "general"
   | "writing"
   | "coding"
@@ -187,12 +187,12 @@ export type AppTemplateCategory =
   | "education"
   | "other"
 
-export interface AppTemplate {
+export interface AssistantTemplate {
   id: string
   name: string
   description: string
-  icon: AppIcon
-  category: AppTemplateCategory
+  icon: AssistantIcon
+  category: AssistantTemplateCategory
   systemPrompt: string
   welcomeMessage?: string
   suggestedQuestions?: string[]
@@ -211,7 +211,7 @@ export interface ChatTab {
   id: string
   conversationId: string
   title: string
-  appId: string
+  assistantId: string
   isPinned?: boolean
 }
 

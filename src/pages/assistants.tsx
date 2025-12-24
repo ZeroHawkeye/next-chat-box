@@ -1,14 +1,14 @@
-import { useAppStore } from "@/store/useAppStore"
+import { useAssistantStore } from "@/store/useAssistantStore"
 import { Button } from "@/components/ui/button"
 import { SearchInput } from "@/components/ui/input"
 import { Card } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import { Plus, Star, Pencil, Trash2, Bot, Code, FileText, Globe, Sparkles } from "lucide-react"
 import { useState } from "react"
-import type { App } from "@/types"
+import type { Assistant } from "@/types"
 
-// 应用图标显示组件
-function AppIconDisplay({ app, size = "lg" }: { app: App; size?: "sm" | "md" | "lg" | "xl" }) {
+// 助手图标显示组件
+function AssistantIconDisplay({ assistant, size = "lg" }: { assistant: Assistant; size?: "sm" | "md" | "lg" | "xl" }) {
   const sizeClasses = {
     sm: "w-8 h-8 text-base",
     md: "w-10 h-10 text-lg",
@@ -16,16 +16,16 @@ function AppIconDisplay({ app, size = "lg" }: { app: App; size?: "sm" | "md" | "
     xl: "w-20 h-20 text-4xl",
   }
 
-  if (app.icon.type === "emoji") {
+  if (assistant.icon.type === "emoji") {
     return (
       <div
         className={cn(
           "flex items-center justify-center rounded-2xl shadow-sm",
           sizeClasses[size]
         )}
-        style={{ backgroundColor: app.icon.bgColor || "#3b82f6" }}
+        style={{ backgroundColor: assistant.icon.bgColor || "#3b82f6" }}
       >
-        <span className="select-none">{app.icon.value}</span>
+        <span className="select-none">{assistant.icon.value}</span>
       </div>
     )
   }
@@ -42,15 +42,15 @@ function AppIconDisplay({ app, size = "lg" }: { app: App; size?: "sm" | "md" | "
   )
 }
 
-// 应用卡片组件
-function AppCard({ 
-  app, 
+// 助手卡片组件
+function AssistantCard({ 
+  assistant, 
   onSelect, 
   onEdit, 
   onDelete,
   onTogglePinned 
 }: { 
-  app: App
+  assistant: Assistant
   onSelect: () => void
   onEdit: () => void
   onDelete: () => void
@@ -75,11 +75,11 @@ function AppCard({
             e.stopPropagation()
             onTogglePinned()
           }}
-          title={app.isPinned ? "取消收藏" : "收藏"}
+          title={assistant.isPinned ? "取消收藏" : "收藏"}
         >
-          <Star className={cn("w-3.5 h-3.5", app.isPinned && "fill-yellow-400 text-yellow-400")} />
+          <Star className={cn("w-3.5 h-3.5", assistant.isPinned && "fill-yellow-400 text-yellow-400")} />
         </Button>
-        {!app.isBuiltin && (
+        {!assistant.isBuiltin && (
           <>
             <Button
               variant="ghost"
@@ -110,18 +110,18 @@ function AppCard({
       </div>
 
       {/* 收藏标记 */}
-      {app.isPinned && (
+      {assistant.isPinned && (
         <div className="absolute top-2 left-2">
           <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
         </div>
       )}
 
       <div className="flex flex-col items-center text-center gap-3">
-        <AppIconDisplay app={app} size="lg" />
+        <AssistantIconDisplay assistant={assistant} size="lg" />
         <div className="space-y-1">
-          <h3 className="font-medium text-sm line-clamp-1">{app.name}</h3>
+          <h3 className="font-medium text-sm line-clamp-1">{assistant.name}</h3>
           <p className="text-xs text-muted-foreground line-clamp-2 min-h-[2.5em]">
-            {app.description || "暂无描述"}
+            {assistant.description || "暂无描述"}
           </p>
         </div>
       </div>
@@ -166,51 +166,51 @@ function CategoryTabs({
   )
 }
 
-export default function AppsPage() {
-  const { apps, updateApp, deleteApp } = useAppStore()
+export default function AssistantsPage() {
+  const { assistants, updateAssistant, deleteAssistant } = useAssistantStore()
   const [searchQuery, setSearchQuery] = useState("")
   const [category, setCategory] = useState("all")
   const [activeTab, setActiveTab] = useState<"market" | "my">("my")
 
-  // 过滤应用
-  const filteredApps = apps.filter((app) => {
+  // 过滤助手
+  const filteredAssistants = assistants.filter((assistant) => {
     const matchesSearch =
-      app.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      app.description?.toLowerCase().includes(searchQuery.toLowerCase())
+      assistant.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      assistant.description?.toLowerCase().includes(searchQuery.toLowerCase())
     
     if (activeTab === "my") {
       return matchesSearch
     }
     
-    // 市场页面只显示模板 (这里暂时使用内置应用作为示例)
-    return matchesSearch && app.isBuiltin
+    // 市场页面只显示模板 (这里暂时使用内置助手作为示例)
+    return matchesSearch && assistant.isBuiltin
   })
 
   // 按收藏和时间排序
-  const sortedApps = [...filteredApps].sort((a, b) => {
+  const sortedAssistants = [...filteredAssistants].sort((a, b) => {
     if (a.isPinned && !b.isPinned) return -1
     if (!a.isPinned && b.isPinned) return 1
     return b.updatedAt - a.updatedAt
   })
 
-  const handleSelectApp = (app: App) => {
+  const handleSelectAssistant = (assistant: Assistant) => {
     // TODO: 导航到聊天页面
-    console.log("Select app:", app.id)
+    console.log("Select assistant:", assistant.id)
   }
 
-  const handleEditApp = (app: App) => {
+  const handleEditAssistant = (assistant: Assistant) => {
     // TODO: 打开编辑弹窗
-    console.log("Edit app:", app.id)
+    console.log("Edit assistant:", assistant.id)
   }
 
-  const handleDeleteApp = (app: App) => {
-    if (confirm(`确定要删除应用 "${app.name}" 吗？`)) {
-      deleteApp(app.id)
+  const handleDeleteAssistant = (assistant: Assistant) => {
+    if (confirm(`确定要删除助手 "${assistant.name}" 吗？`)) {
+      deleteAssistant(assistant.id)
     }
   }
 
-  const handleTogglePinned = (app: App) => {
-    updateApp(app.id, { isPinned: !app.isPinned })
+  const handleTogglePinned = (assistant: Assistant) => {
+    updateAssistant(assistant.id, { isPinned: !assistant.isPinned })
   }
 
   return (
@@ -218,10 +218,10 @@ export default function AppsPage() {
       {/* Header */}
       <div className="flex-shrink-0 px-6 py-4 border-b border-border/50">
         <div className="flex items-center justify-between mb-4">
-          <h1 className="text-xl font-semibold">应用</h1>
+          <h1 className="text-xl font-semibold">助手</h1>
           <Button size="sm" className="gap-1.5">
             <Plus className="w-4 h-4" />
-            创建应用
+            创建助手
           </Button>
         </div>
 
@@ -236,7 +236,7 @@ export default function AppsPage() {
                 : "border-transparent text-muted-foreground hover:text-foreground"
             )}
           >
-            我的应用
+            我的助手
           </button>
           <button
             onClick={() => setActiveTab("market")}
@@ -247,14 +247,14 @@ export default function AppsPage() {
                 : "border-transparent text-muted-foreground hover:text-foreground"
             )}
           >
-            应用市场
+            助手市场
           </button>
         </div>
 
         {/* Search & Filter */}
         <div className="flex items-center gap-4">
           <SearchInput
-            placeholder="搜索应用..."
+            placeholder="搜索助手..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onClear={() => setSearchQuery("")}
@@ -266,34 +266,34 @@ export default function AppsPage() {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto p-6 scrollbar-apple">
-        {sortedApps.length === 0 ? (
+        {sortedAssistants.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 text-center">
             <div className="w-16 h-16 rounded-2xl bg-muted/50 flex items-center justify-center mb-4">
               <Bot className="w-8 h-8 text-muted-foreground" />
             </div>
             <h3 className="text-lg font-medium mb-2">
-              {searchQuery ? "未找到匹配的应用" : "暂无应用"}
+              {searchQuery ? "未找到匹配的助手" : "暂无助手"}
             </h3>
             <p className="text-sm text-muted-foreground mb-4">
-              {searchQuery ? "尝试使用其他关键词搜索" : "创建你的第一个 AI 应用"}
+              {searchQuery ? "尝试使用其他关键词搜索" : "创建你的第一个 AI 助手"}
             </p>
             {!searchQuery && (
               <Button size="sm" className="gap-1.5">
                 <Plus className="w-4 h-4" />
-                创建应用
+                创建助手
               </Button>
             )}
           </div>
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
-            {sortedApps.map((app) => (
-              <AppCard
-                key={app.id}
-                app={app}
-                onSelect={() => handleSelectApp(app)}
-                onEdit={() => handleEditApp(app)}
-                onDelete={() => handleDeleteApp(app)}
-                onTogglePinned={() => handleTogglePinned(app)}
+            {sortedAssistants.map((assistant) => (
+              <AssistantCard
+                key={assistant.id}
+                assistant={assistant}
+                onSelect={() => handleSelectAssistant(assistant)}
+                onEdit={() => handleEditAssistant(assistant)}
+                onDelete={() => handleDeleteAssistant(assistant)}
+                onTogglePinned={() => handleTogglePinned(assistant)}
               />
             ))}
           </div>

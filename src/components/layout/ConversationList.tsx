@@ -1,11 +1,11 @@
-import { useAppStore } from "@/store/useAppStore"
+import { useAssistantStore } from "@/store/useAssistantStore"
 import { Button } from "@/components/ui/button"
 import { SearchInput } from "@/components/ui/input"
 import { cn } from "@/lib/utils"
 import { Plus, MessageSquare, Trash2, Pin, MoreHorizontal, ExternalLink } from "lucide-react"
 import { useNavigate } from "@tanstack/react-router"
 import { useState } from "react"
-import type { App } from "@/types"
+import type { Assistant } from "@/types"
 
 interface ConversationListProps {
   className?: string
@@ -31,32 +31,32 @@ function formatTime(timestamp: number): string {
 
 export function ConversationList({ className, style }: ConversationListProps) {
   const {
-    apps,
-    currentAppId,
+    assistants,
+    currentAssistantId,
     conversations,
     currentConversationId,
     createConversation,
     deleteConversation,
     openTab,
     getOpenTabs,
-  } = useAppStore()
+  } = useAssistantStore()
   const navigate = useNavigate()
   const [searchQuery, setSearchQuery] = useState("")
 
-  // 获取当前应用
-  const currentApp = apps.find((app) => app.id === currentAppId)
+  // 获取当前助手
+  const currentAssistant = assistants.find((assistant) => assistant.id === currentAssistantId)
 
   // 获取已打开的Tab
   const openTabs = getOpenTabs()
   const openConversationIds = new Set(openTabs.map((t) => t.conversationId))
 
-  // 过滤当前应用的对话
-  const appConversations = conversations.filter(
-    (conv) => conv.appId === currentAppId
+  // 过滤当前助手的对话
+  const assistantConversations = conversations.filter(
+    (conv) => conv.appId === currentAssistantId
   )
 
   // 搜索过滤
-  const filteredConversations = appConversations.filter((conv) =>
+  const filteredConversations = assistantConversations.filter((conv) =>
     conv.title.toLowerCase().includes(searchQuery.toLowerCase())
   )
 
@@ -68,8 +68,8 @@ export function ConversationList({ className, style }: ConversationListProps) {
   })
 
   const handleNewConversation = () => {
-    if (!currentAppId) return
-    const conversationId = createConversation(currentAppId)
+    if (!currentAssistantId) return
+    const conversationId = createConversation(currentAssistantId)
     openTab(conversationId)
     navigate({ to: "/chat" })
   }
@@ -86,15 +86,15 @@ export function ConversationList({ className, style }: ConversationListProps) {
 
   return (
     <div className={cn("flex flex-col h-full bg-sidebar", className)} style={style}>
-      {/* 当前应用信息 */}
-      {currentApp && (
+      {/* 当前助手信息 */}
+      {currentAssistant && (
         <div className="flex-shrink-0 px-3 pt-3 pb-2">
           <div className="flex items-center gap-2 px-1">
-            <CurrentAppIcon app={currentApp} />
+            <CurrentAssistantIcon assistant={currentAssistant} />
             <div className="flex-1 min-w-0">
-              <h2 className="text-sm font-medium truncate">{currentApp.name}</h2>
+              <h2 className="text-sm font-medium truncate">{currentAssistant.name}</h2>
               <p className="text-[11px] text-muted-foreground truncate">
-                {appConversations.length} 个对话
+                {assistantConversations.length} 个对话
               </p>
             </div>
             <Button
@@ -124,10 +124,10 @@ export function ConversationList({ className, style }: ConversationListProps) {
 
       {/* 对话列表 */}
       <div className="flex-1 overflow-y-auto px-2 pb-2 scrollbar-apple">
-        {!currentAppId ? (
+        {!currentAssistantId ? (
           <div className="flex flex-col items-center justify-center py-12 text-center px-4">
             <MessageSquare className="w-8 h-8 text-muted-foreground/50 mb-3" />
-            <p className="text-sm text-muted-foreground">请先选择一个应用</p>
+            <p className="text-sm text-muted-foreground">请先选择一个助手</p>
           </div>
         ) : sortedConversations.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-12 text-center px-4">
@@ -229,15 +229,15 @@ export function ConversationList({ className, style }: ConversationListProps) {
   )
 }
 
-// 当前应用图标组件
-function CurrentAppIcon({ app }: { app: App }) {
-  if (app.icon.type === "emoji") {
+// 当前助手图标组件
+function CurrentAssistantIcon({ assistant }: { assistant: Assistant }) {
+  if (assistant.icon.type === "emoji") {
     return (
       <div
         className="w-9 h-9 flex items-center justify-center rounded-xl text-lg"
-        style={{ backgroundColor: app.icon.bgColor || "#3b82f6" }}
+        style={{ backgroundColor: assistant.icon.bgColor || "#3b82f6" }}
       >
-        <span className="select-none">{app.icon.value}</span>
+        <span className="select-none">{assistant.icon.value}</span>
       </div>
     )
   }

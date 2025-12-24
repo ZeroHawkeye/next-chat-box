@@ -1,5 +1,5 @@
 import { ReactNode, useState, useCallback, useEffect, useRef } from "react"
-import { useAppStore, SIDEBAR_MIN_WIDTH, SIDEBAR_COLLAPSE_THRESHOLD } from "@/store/useAppStore"
+import { useAssistantStore, SIDEBAR_MIN_WIDTH, SIDEBAR_COLLAPSE_THRESHOLD } from "@/store/useAssistantStore"
 import { Sidebar } from "./Sidebar"
 import { TitleBar } from "@/components/titlebar"
 import { cn } from "@/lib/utils"
@@ -18,7 +18,7 @@ interface DesktopLayoutProps {
  * - 自定义窗口边框
  */
 export function DesktopLayout({ children }: DesktopLayoutProps) {
-  const { sidebarOpen, sidebarWidth, setSidebarWidth, setSidebarOpen } = useAppStore()
+  const { sidebarOpen, sidebarWidth, setSidebarWidth, setSidebarOpen } = useAssistantStore()
   const [isResizing, setIsResizing] = useState(false)
   const sidebarRef = useRef<HTMLDivElement>(null)
 

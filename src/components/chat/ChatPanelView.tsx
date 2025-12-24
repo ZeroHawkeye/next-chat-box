@@ -1,4 +1,4 @@
-import { useAppStore } from "@/store/useAppStore"
+import { useAssistantStore } from "@/store/useAssistantStore"
 import { Button } from "@/components/ui/button"
 import {
   Send,
@@ -11,7 +11,7 @@ import {
 } from "lucide-react"
 import { useState, useRef, useEffect } from "react"
 import { cn } from "@/lib/utils"
-import type { ChatPanel as ChatPanelType, App } from "@/types"
+import type { ChatPanel as ChatPanelType, Assistant } from "@/types"
 import { ChatTabBar } from "./ChatTabBar"
 
 interface ChatPanelProps {
@@ -22,20 +22,20 @@ interface ChatPanelProps {
 
 // 欢迎界面组件
 function WelcomeScreen({
-  app,
+  assistant,
   onQuickPrompt,
 }: {
-  app: App | null
+  assistant: Assistant | null
   onQuickPrompt: (prompt: string) => void
 }) {
   // 快捷提示
   const defaultQuickPrompts = ["写一篇文章", "解释一个概念", "帮我写代码", "翻译文本"]
 
-  // 根据应用类型显示不同的快捷提示
-  const getQuickPrompts = (app: App | null) => {
-    if (!app) return defaultQuickPrompts
+  // 根据助手类型显示不同的快捷提示
+  const getQuickPrompts = (assistant: Assistant | null) => {
+    if (!assistant) return defaultQuickPrompts
 
-    switch (app.id) {
+    switch (assistant.id) {
       case "code-assistant":
         return ["写一个函数", "解释代码", "调试问题", "代码优化"]
       case "writer-assistant":
@@ -47,17 +47,17 @@ function WelcomeScreen({
     }
   }
 
-  const quickPrompts = getQuickPrompts(app)
+  const quickPrompts = getQuickPrompts(assistant)
 
   return (
     <div className="flex flex-col items-center justify-center py-16 text-center px-4">
-      {/* 应用图标 */}
-      {app ? (
+      {/* 助手图标 */}
+      {assistant ? (
         <div
           className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mb-4 shadow-lg"
-          style={{ backgroundColor: app.icon.bgColor || "#3b82f6" }}
+          style={{ backgroundColor: assistant.icon.bgColor || "#3b82f6" }}
         >
-          {app.icon.value}
+          {assistant.icon.value}
         </div>
       ) : (
         <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center mb-4">
@@ -67,11 +67,11 @@ function WelcomeScreen({
 
       {/* 欢迎语 */}
       <h2 className="text-lg font-semibold mb-2">
-        {app?.welcomeMessage || app?.name || "有什么可以帮你？"}
+        {assistant?.welcomeMessage || assistant?.name || "有什么可以帮你？"}
       </h2>
-      {app?.description && (
+      {assistant?.description && (
         <p className="text-sm text-muted-foreground mb-6 max-w-md">
-          {app.description}
+          {assistant.description}
         </p>
       )}
 
@@ -99,7 +99,7 @@ function WelcomeScreen({
 
 export function ChatPanelView({ panel, isActive, canClose }: ChatPanelProps) {
   const {
-    apps,
+    assistants,
     chats,
     currentChatId,
     addMessage,
@@ -109,9 +109,9 @@ export function ChatPanelView({ panel, isActive, canClose }: ChatPanelProps) {
     setActivePanel,
     closePanel,
     openTab,
-    currentAppId,
+    currentAssistantId,
     createConversation,
-  } = useAppStore()
+  } = useAssistantStore()
 
   const [input, setInput] = useState("")
   const [copiedId, setCopiedId] = useState<string | null>(null)
@@ -123,10 +123,10 @@ export function ChatPanelView({ panel, isActive, canClose }: ChatPanelProps) {
   // 预留：后续用于显示会话详情
   void activeTab
 
-  // 获取当前应用
-  const currentApp = activeTab
-    ? apps.find((a) => a.id === activeTab.appId)
-    : apps.find((a) => a.id === currentAppId)
+  // 获取当前助手
+  const currentAssistant = activeTab
+    ? assistants.find((a) => a.id === activeTab.assistantId)
+    : assistants.find((a) => a.id === currentAssistantId)
 
   // Legacy: 获取当前聊天
   const currentChat = chats.find((chat) => chat.id === currentChatId)
@@ -173,8 +173,8 @@ export function ChatPanelView({ panel, isActive, canClose }: ChatPanelProps) {
   }
 
   const handleNewChat = () => {
-    if (currentAppId) {
-      const conversationId = createConversation(currentAppId)
+    if (currentAssistantId) {
+      const conversationId = createConversation(currentAssistantId)
       openTab(conversationId, panel.id)
     } else {
       const chatId = createChat()
@@ -245,7 +245,7 @@ export function ChatPanelView({ panel, isActive, canClose }: ChatPanelProps) {
             <div className="max-w-2xl mx-auto px-4 py-4">
               {!hasMessages ? (
                 // 欢迎界面
-                <WelcomeScreen app={currentApp || null} onQuickPrompt={handleQuickPrompt} />
+                <WelcomeScreen assistant={currentAssistant || null} onQuickPrompt={handleQuickPrompt} />
               ) : (
                 // 消息列表
                 <div className="space-y-4">
@@ -263,20 +263,20 @@ export function ChatPanelView({ panel, isActive, canClose }: ChatPanelProps) {
                           "flex-shrink-0 w-7 h-7 rounded-lg flex items-center justify-center",
                           message.role === "user"
                             ? "bg-primary text-primary-foreground"
-                            : currentApp?.icon.bgColor
+                            : currentAssistant?.icon.bgColor
                               ? ""
                               : "bg-secondary text-muted-foreground"
                         )}
                         style={
-                          message.role !== "user" && currentApp?.icon.bgColor
-                            ? { backgroundColor: currentApp.icon.bgColor }
+                          message.role !== "user" && currentAssistant?.icon.bgColor
+                            ? { backgroundColor: currentAssistant.icon.bgColor }
                             : undefined
                         }
                       >
                         {message.role === "user" ? (
                           <User className="w-4 h-4" />
-                        ) : currentApp ? (
-                          <span className="text-sm">{currentApp.icon.value}</span>
+                        ) : currentAssistant ? (
+                          <span className="text-sm">{currentAssistant.icon.value}</span>
                         ) : (
                           <Bot className="w-4 h-4" />
                         )}
@@ -328,13 +328,13 @@ export function ChatPanelView({ panel, isActive, canClose }: ChatPanelProps) {
                       <div
                         className="w-7 h-7 rounded-lg flex items-center justify-center"
                         style={
-                          currentApp?.icon.bgColor
-                            ? { backgroundColor: currentApp.icon.bgColor }
+                          currentAssistant?.icon.bgColor
+                            ? { backgroundColor: currentAssistant.icon.bgColor }
                             : undefined
                         }
                       >
-                        {currentApp ? (
-                          <span className="text-sm">{currentApp.icon.value}</span>
+                        {currentAssistant ? (
+                          <span className="text-sm">{currentAssistant.icon.value}</span>
                         ) : (
                           <Bot className="w-4 h-4 text-muted-foreground" />
                         )}
@@ -365,8 +365,8 @@ export function ChatPanelView({ panel, isActive, canClose }: ChatPanelProps) {
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={handleKeyDown}
                   placeholder={
-                    currentApp
-                      ? `向 ${currentApp.name} 提问...`
+                    currentAssistant
+                      ? `向 ${currentAssistant.name} 提问...`
                       : "输入消息..."
                   }
                   rows={1}

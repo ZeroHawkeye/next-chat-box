@@ -1,6 +1,6 @@
 import { useEffect, useCallback } from "react"
 import { useShortcutStore } from "@/store/useShortcutStore"
-import { useAppStore, isPanelGroup } from "@/store/useAppStore"
+import { useAssistantStore, isPanelGroup } from "@/store/useAssistantStore"
 import type { ShortcutAction } from "@/types"
 import type { ChatPanel, PanelGroup } from "@/types"
 
@@ -15,7 +15,7 @@ export function useGlobalShortcuts() {
     activePanelId,
     closeTab,
     setActiveTab,
-  } = useAppStore()
+  } = useAssistantStore()
 
   // 加载快捷键配置
   useEffect(() => {

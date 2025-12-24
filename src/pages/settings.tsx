@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from "react"
 import { useThemeStore, themeColors, ZOOM_MIN, ZOOM_MAX, ZOOM_DEFAULT, type ThemeMode, type ThemeColor } from "@/store/useThemeStore"
-import { useAppStore } from "@/store/useAppStore"
+import { useAssistantStore } from "@/store/useAssistantStore"
 import { useShortcutStore } from "@/store/useShortcutStore"
 import { Button } from "@/components/ui/button"
 import {
@@ -265,7 +265,7 @@ function ShortcutRecorder({ shortcut, onUpdate, onReset, existingShortcuts }: Sh
 
 function AppearanceSettings() {
   const { mode, color, zoom, setMode, setColor, setZoom } = useThemeStore()
-  const { showAppRail, setShowAppRail } = useAppStore()
+  const { showAssistantRail, setShowAssistantRail } = useAssistantStore()
 
   const themeModes: { value: ThemeMode; label: string; icon: React.ReactNode }[] = [
     { value: "light", label: "浅色", icon: <Sun className="w-3.5 h-3.5" /> },
@@ -406,18 +406,18 @@ function AppearanceSettings() {
         </div>
         
         <div className="border border-border/50 rounded-lg overflow-hidden">
-          {/* 应用栏开关 */}
+          {/* 助手栏开关 */}
           <div className="flex items-center justify-between px-3 py-2.5">
             <div className="flex items-center gap-2.5">
               <LayoutGrid className="w-3.5 h-3.5 text-muted-foreground" />
               <div>
-                <div className="text-[13px]">显示应用栏</div>
+                <div className="text-[13px]">显示助手栏</div>
                 <div className="text-[11px] text-muted-foreground">
-                  左侧快速切换不同应用
+                  左侧快速切换不同助手
                 </div>
               </div>
             </div>
-            <Switch checked={showAppRail} onChange={setShowAppRail} />
+            <Switch checked={showAssistantRail} onChange={setShowAssistantRail} />
           </div>
         </div>
       </section>

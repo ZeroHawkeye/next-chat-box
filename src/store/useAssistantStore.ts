@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { devtools, persist } from "zustand/middleware"
-import type { App, Conversation, AppIcon, ChatTab, ChatPanel, PanelGroup, Workspace } from "@/types"
+import type { Assistant, Conversation, AssistantIcon, ChatTab, ChatPanel, PanelGroup, Workspace } from "@/types"
 import { configStorage } from "@/lib/config"
 
 // 侧边栏宽度配置
@@ -9,8 +9,8 @@ export const SIDEBAR_MAX_WIDTH = 400
 export const SIDEBAR_DEFAULT_WIDTH = 280
 export const SIDEBAR_COLLAPSE_THRESHOLD = 100
 
-// App Rail 宽度 (紧凑设计)
-export const APP_RAIL_WIDTH = 48
+// Assistant Rail 宽度 (紧凑设计)
+export const ASSISTANT_RAIL_WIDTH = 48
 
 export interface ChatMessage {
   id: string
@@ -27,15 +27,15 @@ export interface Chat {
   updatedAt: number
 }
 
-// 默认应用图标
-const defaultAppIcon: AppIcon = {
+// 默认助手图标
+const defaultAssistantIcon: AssistantIcon = {
   type: "emoji",
   value: "🤖",
   bgColor: "#3b82f6",
 }
 
-// 内置应用模板 (Mock 数据)
-const builtinApps: App[] = [
+// 内置助手模板 (Mock 数据)
+const builtinAssistants: Assistant[] = [
   {
     id: "default-assistant",
     name: "通用助手",
@@ -45,7 +45,7 @@ const builtinApps: App[] = [
     welcomeMessage: "你好！有什么我可以帮助你的吗？",
     modelConfig: {},
     mcpConfig: { enabledServers: [], enabledTools: [] },
-    type: "assistant",
+    type: "simple",
     isBuiltin: true,
     isPinned: true,
     sortOrder: 0,
@@ -61,7 +61,7 @@ const builtinApps: App[] = [
     welcomeMessage: "你好！我是你的代码助手，可以帮你编写代码、调试问题、代码审查等。有什么需要帮助的吗？",
     modelConfig: {},
     mcpConfig: { enabledServers: [], enabledTools: [] },
-    type: "assistant",
+    type: "simple",
     isBuiltin: true,
     isPinned: true,
     sortOrder: 1,
@@ -77,7 +77,7 @@ const builtinApps: App[] = [
     welcomeMessage: "你好！我可以帮你写文章、润色文本、优化表达。告诉我你想写什么？",
     modelConfig: {},
     mcpConfig: { enabledServers: [], enabledTools: [] },
-    type: "assistant",
+    type: "simple",
     isBuiltin: true,
     isPinned: false,
     sortOrder: 2,
@@ -93,7 +93,7 @@ const builtinApps: App[] = [
     welcomeMessage: "你好！我可以帮你进行多语言翻译。请输入需要翻译的内容。",
     modelConfig: {},
     mcpConfig: { enabledServers: [], enabledTools: [] },
-    type: "assistant",
+    type: "simple",
     isBuiltin: true,
     isPinned: false,
     sortOrder: 3,
@@ -205,10 +205,10 @@ function getAllTabs(node: ChatPanel | PanelGroup): ChatTab[] {
   return panels.flatMap((panel) => panel.tabs)
 }
 
-export interface AppState {
-  // App 状态
-  apps: App[]
-  currentAppId: string | null
+export interface AssistantState {
+  // Assistant 状态
+  assistants: Assistant[]
+  currentAssistantId: string | null
   
   // Conversation 状态
   conversations: Conversation[]
@@ -226,18 +226,18 @@ export interface AppState {
   // UI state
   sidebarOpen: boolean
   sidebarWidth: number
-  showAppRail: boolean
+  showAssistantRail: boolean
   theme: "light" | "dark" | "system"
 
-  // App Actions
-  setCurrentApp: (appId: string | null) => void
-  createApp: (params: Partial<App>) => string
-  updateApp: (appId: string, updates: Partial<App>) => void
-  deleteApp: (appId: string) => void
+  // Assistant Actions
+  setCurrentAssistant: (assistantId: string | null) => void
+  createAssistant: (params: Partial<Assistant>) => string
+  updateAssistant: (assistantId: string, updates: Partial<Assistant>) => void
+  deleteAssistant: (assistantId: string) => void
   
   // Conversation Actions
   setCurrentConversation: (conversationId: string | null) => void
-  createConversation: (appId: string, title?: string) => string
+  createConversation: (assistantId: string, title?: string) => string
   deleteConversation: (conversationId: string) => void
   
   // Tab Actions
@@ -266,17 +266,17 @@ export interface AppState {
   toggleSidebar: () => void
   setSidebarWidth: (width: number) => void
   setSidebarOpen: (open: boolean) => void
-  setShowAppRail: (show: boolean) => void
+  setShowAssistantRail: (show: boolean) => void
   setTheme: (theme: "light" | "dark" | "system") => void
 }
 
-export const useAppStore = create<AppState>()(
+export const useAssistantStore = create<AssistantState>()(
   devtools(
     persist(
       (set, get) => ({
         // Initial state
-        apps: builtinApps,
-        currentAppId: "default-assistant",
+        assistants: builtinAssistants,
+        currentAssistantId: "default-assistant",
         conversations: mockConversations,
         currentConversationId: null,
         workspace: createDefaultWorkspace(),
@@ -286,57 +286,57 @@ export const useAppStore = create<AppState>()(
         isProcessing: false,
         sidebarOpen: true,
         sidebarWidth: SIDEBAR_DEFAULT_WIDTH,
-        showAppRail: true,
+        showAssistantRail: true,
         theme: "system",
 
-        // App Actions
-        setCurrentApp: (appId) => set({ currentAppId: appId, currentConversationId: null }),
+        // Assistant Actions
+        setCurrentAssistant: (assistantId) => set({ currentAssistantId: assistantId, currentConversationId: null }),
         
-        createApp: (params) => {
-          const appId = `app-${Date.now()}`
-          const newApp: App = {
-            id: appId,
-            name: params.name || "新应用",
+        createAssistant: (params) => {
+          const assistantId = `assistant-${Date.now()}`
+          const newAssistant: Assistant = {
+            id: assistantId,
+            name: params.name || "新助手",
             description: params.description,
-            icon: params.icon || defaultAppIcon,
+            icon: params.icon || defaultAssistantIcon,
             systemPrompt: params.systemPrompt || "",
             welcomeMessage: params.welcomeMessage,
             modelConfig: params.modelConfig || {},
             mcpConfig: params.mcpConfig || { enabledServers: [], enabledTools: [] },
-            type: params.type || "assistant",
+            type: params.type || "simple",
             isBuiltin: false,
             isPinned: false,
             sortOrder: 999,
             createdAt: Date.now(),
             updatedAt: Date.now(),
           }
-          set((state) => ({ apps: [...state.apps, newApp] }))
-          return appId
+          set((state) => ({ assistants: [...state.assistants, newAssistant] }))
+          return assistantId
         },
         
-        updateApp: (appId, updates) => {
+        updateAssistant: (assistantId, updates) => {
           set((state) => ({
-            apps: state.apps.map((app) =>
-              app.id === appId ? { ...app, ...updates, updatedAt: Date.now() } : app
+            assistants: state.assistants.map((assistant) =>
+              assistant.id === assistantId ? { ...assistant, ...updates, updatedAt: Date.now() } : assistant
             ),
           }))
         },
         
-        deleteApp: (appId) => {
+        deleteAssistant: (assistantId) => {
           set((state) => ({
-            apps: state.apps.filter((app) => app.id !== appId),
-            currentAppId: state.currentAppId === appId ? null : state.currentAppId,
+            assistants: state.assistants.filter((assistant) => assistant.id !== assistantId),
+            currentAssistantId: state.currentAssistantId === assistantId ? null : state.currentAssistantId,
           }))
         },
         
         // Conversation Actions
         setCurrentConversation: (conversationId) => set({ currentConversationId: conversationId }),
         
-        createConversation: (appId, title = "新对话") => {
+        createConversation: (assistantId, title = "新对话") => {
           const conversationId = `conv-${Date.now()}`
           const newConversation: Conversation = {
             id: conversationId,
-            appId,
+            appId: assistantId, // 保持兼容，后续可改为 assistantId
             title,
             messageCount: 0,
             isPinned: false,
@@ -394,7 +394,7 @@ export const useAppStore = create<AppState>()(
             id: `tab-${Date.now()}`,
             conversationId,
             title: conversation.title,
-            appId: conversation.appId,
+            assistantId: conversation.appId, // 使用 appId 作为 assistantId
           }
 
           // 确定目标面板
@@ -747,41 +747,41 @@ export const useAppStore = create<AppState>()(
           configStorage.save({ sidebar_open: open })
         },
 
-        setShowAppRail: (show) => {
-          set({ showAppRail: show })
-          configStorage.save({ show_app_rail: show })
+        setShowAssistantRail: (show) => {
+          set({ showAssistantRail: show })
+          configStorage.save({ show_assistant_rail: show })
         },
 
         setTheme: (theme) => set({ theme }),
       }),
       {
-        name: "app-store",
+        name: "assistant-store",
         partialize: (state) => ({
-          apps: state.apps.filter((app) => !app.isBuiltin), // 只持久化非内置应用
-          currentAppId: state.currentAppId,
+          assistants: state.assistants.filter((assistant) => !assistant.isBuiltin), // 只持久化非内置助手
+          currentAssistantId: state.currentAssistantId,
           conversations: state.conversations,
           currentConversationId: state.currentConversationId,
           workspace: state.workspace,
           activePanelId: state.activePanelId,
           sidebarOpen: state.sidebarOpen,
           sidebarWidth: state.sidebarWidth,
-          showAppRail: state.showAppRail,
+          showAssistantRail: state.showAssistantRail,
           chats: state.chats,
           currentChatId: state.currentChatId,
         }),
-        // 恢复时合并内置应用
+        // 恢复时合并内置助手
         merge: (persistedState, currentState) => {
-          const persisted = persistedState as Partial<AppState>
+          const persisted = persistedState as Partial<AssistantState>
           return {
             ...currentState,
             ...persisted,
-            // 确保内置应用始终存在，并合并用户创建的应用
-            apps: [
-              ...builtinApps,
-              ...(persisted.apps || []).filter((app: App) => !app.isBuiltin),
+            // 确保内置助手始终存在，并合并用户创建的助手
+            assistants: [
+              ...builtinAssistants,
+              ...(persisted.assistants || []).filter((assistant: Assistant) => !assistant.isBuiltin),
             ],
-            // 如果没有选中的应用，默认选择第一个内置应用
-            currentAppId: persisted.currentAppId || "default-assistant",
+            // 如果没有选中的助手，默认选择第一个内置助手
+            currentAssistantId: persisted.currentAssistantId || "default-assistant",
             // 确保工作区存在
             workspace: persisted.workspace || createDefaultWorkspace(),
           }
@@ -789,7 +789,17 @@ export const useAppStore = create<AppState>()(
       }
     ),
     {
-      name: "app-store",
+      name: "assistant-store",
     }
   )
 )
+
+// ============================================================================
+// 兼容层：保持旧 API 可用，方便渐进式迁移
+// ============================================================================
+
+/** @deprecated 使用 useAssistantStore 替代 */
+export const useAppStore = useAssistantStore
+
+/** @deprecated 使用 ASSISTANT_RAIL_WIDTH 替代 */
+export const APP_RAIL_WIDTH = ASSISTANT_RAIL_WIDTH

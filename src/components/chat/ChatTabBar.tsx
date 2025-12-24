@@ -1,8 +1,8 @@
-import { useAppStore } from "@/store/useAppStore"
+import { useAssistantStore } from "@/store/useAssistantStore"
 import { cn } from "@/lib/utils"
 import { X, Plus, GripVertical } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import type { ChatPanel, ChatTab, App } from "@/types"
+import type { ChatPanel, ChatTab, Assistant } from "@/types"
 import { useDraggable, useDroppable } from "@dnd-kit/core"
 import type { TabDragData } from "./DragContext"
 
@@ -17,7 +17,7 @@ function DraggableTab({
   tab,
   index,
   panel,
-  app,
+  assistant,
   title,
   isActive,
   onSelect,
@@ -26,7 +26,7 @@ function DraggableTab({
   tab: ChatTab
   index: number
   panel: ChatPanel
-  app?: App
+  assistant?: Assistant
   title: string
   isActive: boolean
   onSelect: () => void
@@ -37,9 +37,9 @@ function DraggableTab({
     tabId: tab.id,
     panelId: panel.id,
     conversationId: tab.conversationId,
-    appId: tab.appId,
+    assistantId: tab.assistantId,
     title,
-    icon: app?.icon.value,
+    icon: assistant?.icon.value,
   }
 
   const {
@@ -89,13 +89,13 @@ function DraggableTab({
         <GripVertical className="w-3 h-3 text-muted-foreground/50 flex-shrink-0" />
       </div>
 
-      {/* 应用图标 */}
-      {app && (
+      {/* 助手图标 */}
+      {assistant && (
         <span
           className="text-xs flex-shrink-0 w-4 h-4 rounded flex items-center justify-center"
-          style={{ backgroundColor: app.icon.bgColor }}
+          style={{ backgroundColor: assistant.icon.bgColor }}
         >
-          {app.icon.value}
+          {assistant.icon.value}
         </span>
       )}
 
@@ -121,23 +121,23 @@ function DraggableTab({
 
 export function ChatTabBar({ panel, onClose, canClose }: ChatTabBarProps) {
   const {
-    apps,
+    assistants,
     conversations,
     setActiveTab,
     closeTab,
     createConversation,
     openTab,
-    currentAppId,
-  } = useAppStore()
+    currentAssistantId,
+  } = useAssistantStore()
 
   const handleNewTab = () => {
-    if (!currentAppId) return
-    const conversationId = createConversation(currentAppId)
+    if (!currentAssistantId) return
+    const conversationId = createConversation(currentAssistantId)
     openTab(conversationId, panel.id)
   }
 
-  const getAppForTab = (tab: ChatTab): App | undefined => {
-    return apps.find((a) => a.id === tab.appId)
+  const getAssistantForTab = (tab: ChatTab): Assistant | undefined => {
+    return assistants.find((a) => a.id === tab.assistantId)
   }
 
   const getConversationTitle = (tab: ChatTab): string => {
@@ -150,7 +150,7 @@ export function ChatTabBar({ panel, onClose, canClose }: ChatTabBarProps) {
       {/* Tabs */}
       <div className="flex-1 flex items-center gap-0.5 overflow-x-auto scrollbar-none min-w-0">
         {panel.tabs.map((tab, index) => {
-          const app = getAppForTab(tab)
+          const assistant = getAssistantForTab(tab)
           const isActive = tab.id === panel.activeTabId
 
           return (
@@ -159,7 +159,7 @@ export function ChatTabBar({ panel, onClose, canClose }: ChatTabBarProps) {
               tab={tab}
               index={index}
               panel={panel}
-              app={app}
+              assistant={assistant}
               title={getConversationTitle(tab)}
               isActive={isActive}
               onSelect={() => setActiveTab(tab.id, panel.id)}

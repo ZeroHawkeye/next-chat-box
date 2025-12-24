@@ -17,10 +17,10 @@ const chatRoute = createRoute({
   component: lazyRouteComponent(() => import("@/pages/chat")),
 });
 
-const appsRoute = createRoute({
+const assistantsRoute = createRoute({
   getParentRoute: () => rootRoute,
-  path: "/apps",
-  component: lazyRouteComponent(() => import("@/pages/apps")),
+  path: "/assistants",
+  component: lazyRouteComponent(() => import("@/pages/assistants")),
 });
 
 const settingsRoute = createRoute({
@@ -32,7 +32,7 @@ const settingsRoute = createRoute({
 const routeTree = rootRoute.addChildren([
   indexRoute,
   chatRoute,
-  appsRoute,
+  assistantsRoute,
   settingsRoute,
 ]);
 

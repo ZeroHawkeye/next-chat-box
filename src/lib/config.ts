@@ -4,7 +4,7 @@ export interface AppConfig {
   theme: string
   color: string
   zoom: number
-  show_app_rail: boolean
+  show_assistant_rail: boolean
   sidebar_open: boolean
   sidebar_width: number
 }
@@ -13,7 +13,7 @@ const DEFAULT_CONFIG: AppConfig = {
   theme: "system",
   color: "default",
   zoom: 100,
-  show_app_rail: true,
+  show_assistant_rail: true,
   sidebar_open: true,
   sidebar_width: 280,
 }

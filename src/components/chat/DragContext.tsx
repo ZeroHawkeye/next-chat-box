@@ -19,7 +19,7 @@ export interface TabDragData {
   tabId: string
   panelId: string
   conversationId: string
-  appId: string
+  assistantId: string
   title: string
   icon?: string
 }

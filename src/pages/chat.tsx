@@ -1,7 +1,7 @@
 import { useCallback } from "react"
 import { PanelLayout, TabDndProvider } from "@/components/chat"
 import type { DropZone } from "@/components/chat"
-import { useAppStore, isPanelGroup } from "@/store/useAppStore"
+import { useAssistantStore, isPanelGroup } from "@/store/useAssistantStore"
 import type { ChatPanel, PanelGroup } from "@/types"
 
 // 辅助函数：获取所有面板
@@ -13,7 +13,7 @@ function getAllPanelsFromNode(node: ChatPanel | PanelGroup): ChatPanel[] {
 }
 
 export default function ChatPage() {
-  const { moveTab, splitPanel } = useAppStore()
+  const { moveTab, splitPanel } = useAssistantStore()
 
   const handleTabMove = useCallback(
     (
@@ -43,7 +43,7 @@ export default function ChatPage() {
 
         // 分割后需要等待状态更新，然后移动tab
         setTimeout(() => {
-          const state = useAppStore.getState()
+          const state = useAssistantStore.getState()
           const allPanels = getAllPanelsFromNode(state.workspace.root)
 
           // 根据 dropZone 决定目标面板

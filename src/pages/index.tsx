@@ -1,4 +1,4 @@
-import { useAppStore } from "@/store/useAppStore"
+import { useAssistantStore } from "@/store/useAssistantStore"
 import { 
   Plus,
   Sparkles,
@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils"
 import Logo from "@/components/ui/Logo"
 
 export default function HomePage() {
-  const { createChat, setCurrentChat, chats } = useAppStore()
+  const { createChat, setCurrentChat, chats } = useAssistantStore()
   const navigate = useNavigate()
 
   const handleCreateChat = () => {

@@ -13,13 +13,13 @@ import {
   Save,
   Trash2,
 } from "lucide-react"
-import type { App, AppIcon } from "@/types"
+import type { Assistant, AssistantIcon } from "@/types"
 
-interface AppEditDialogProps {
-  app?: App | null
+interface AssistantEditDialogProps {
+  assistant?: Assistant | null
   open: boolean
   onClose: () => void
-  onSave: (data: Partial<App>) => void
+  onSave: (data: Partial<Assistant>) => void
   onDelete?: () => void
 }
 
@@ -41,8 +41,8 @@ function IconPicker({
   value,
   onChange,
 }: {
-  value: AppIcon
-  onChange: (icon: AppIcon) => void
+  value: AssistantIcon
+  onChange: (icon: AssistantIcon) => void
 }) {
   const [showPicker, setShowPicker] = useState(false)
 
@@ -60,7 +60,7 @@ function IconPicker({
           {value.value}
         </div>
         <div className="text-left">
-          <p className="text-sm font-medium">应用图标</p>
+          <p className="text-sm font-medium">助手图标</p>
           <p className="text-xs text-muted-foreground">点击更换</p>
         </div>
       </button>
@@ -177,20 +177,20 @@ function ConfigSection({
   )
 }
 
-export function AppEditDialog({
-  app,
+export function AssistantEditDialog({
+  assistant,
   open,
   onClose,
   onSave,
   onDelete,
-}: AppEditDialogProps) {
-  const isNew = !app
-  const [formData, setFormData] = useState<Partial<App>>({
-    name: app?.name || "",
-    description: app?.description || "",
-    icon: app?.icon || { type: "emoji", value: "🤖", bgColor: "#3b82f6" },
-    systemPrompt: app?.systemPrompt || "",
-    welcomeMessage: app?.welcomeMessage || "",
+}: AssistantEditDialogProps) {
+  const isNew = !assistant
+  const [formData, setFormData] = useState<Partial<Assistant>>({
+    name: assistant?.name || "",
+    description: assistant?.description || "",
+    icon: assistant?.icon || { type: "emoji", value: "🤖", bgColor: "#3b82f6" },
+    systemPrompt: assistant?.systemPrompt || "",
+    welcomeMessage: assistant?.welcomeMessage || "",
   })
 
   if (!open) return null
@@ -213,7 +213,7 @@ export function AppEditDialog({
         {/* Header */}
         <div className="flex-shrink-0 flex items-center justify-between px-6 py-4 border-b border-border">
           <h2 className="text-lg font-semibold">
-            {isNew ? "创建应用" : "编辑应用"}
+            {isNew ? "创建助手" : "编辑助手"}
           </h2>
           <Button variant="ghost" size="icon-sm" onClick={onClose}>
             <X className="w-5 h-5" />
@@ -223,15 +223,15 @@ export function AppEditDialog({
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6 scrollbar-apple">
           {/* 基本信息 */}
-          <ConfigSection icon={Bot} title="基本信息" description="设置应用名称和图标">
+          <ConfigSection icon={Bot} title="基本信息" description="设置助手名称和图标">
             <div className="space-y-4">
               <IconPicker
-                value={formData.icon as AppIcon}
+                value={formData.icon as AssistantIcon}
                 onChange={(icon) => setFormData({ ...formData, icon })}
               />
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium">应用名称</label>
+                  <label className="text-sm font-medium">助手名称</label>
                   <Input
                     placeholder="例如：代码助手"
                     value={formData.name}
@@ -241,9 +241,9 @@ export function AppEditDialog({
                   />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-sm font-medium">应用描述</label>
+                  <label className="text-sm font-medium">助手描述</label>
                   <Input
-                    placeholder="简短描述应用功能"
+                    placeholder="简短描述助手功能"
                     value={formData.description}
                     onChange={(e) =>
                       setFormData({ ...formData, description: e.target.value })
@@ -297,7 +297,7 @@ export function AppEditDialog({
           <ConfigSection
             icon={Wrench}
             title="MCP 工具"
-            description="配置应用可使用的工具能力"
+            description="配置助手可使用的工具能力"
             collapsible
             defaultOpen={false}
           >
@@ -339,7 +339,7 @@ export function AppEditDialog({
                 onClick={onDelete}
               >
                 <Trash2 className="w-4 h-4 mr-1.5" />
-                删除应用
+                删除助手
               </Button>
             )}
           </div>

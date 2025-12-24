@@ -1,4 +1,4 @@
-import { useAppStore, isPanelGroup } from "@/store/useAppStore"
+import { useAssistantStore, isPanelGroup } from "@/store/useAssistantStore"
 import { ChatPanelView } from "./ChatPanelView"
 import { cn } from "@/lib/utils"
 import { useState, useCallback, useEffect, useRef } from "react"
@@ -264,7 +264,7 @@ function countPanels(node: ChatPanel | PanelGroup): number {
 }
 
 export function PanelLayout({ className }: PanelLayoutProps) {
-  const { workspace, activePanelId, updatePanelSizes } = useAppStore()
+  const { workspace, activePanelId, updatePanelSizes } = useAssistantStore()
   const containerRef = useRef<HTMLDivElement>(null)
 
   const totalPanelCount = countPanels(workspace.root)
